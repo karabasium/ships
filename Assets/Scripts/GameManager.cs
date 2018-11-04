@@ -42,17 +42,41 @@ public class GameManager : MonoBehaviour {
 				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
 			}
 		}
-		HighlightMoveArea(25, 15, 6);
+		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if (Input.GetMouseButtonDown(0))
+		{
+			Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+			RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+			if (hit.collider != null)
+			{
+				string tileName = hit.collider.gameObject.name;
+				int[] xy = GetXYbyTileName(tileName);
+				Debug.Log(xy);
+				HighlightMoveArea(xy[0], xy[1], 6);
+			}
+		}
 	}
 
 	void Awake()
 	{
 		MakeSingleton();
+	}
+
+	int[] GetXYbyTileName( string s)
+	{
+		int[] xy = new int[] {0,0};
+		int position = s.IndexOf("_");
+		int n = Int32.Parse(s.Substring(position + 1));
+		xy[0] = n % fieldSizeX;
+		xy[1] = n / fieldSizeX+1;
+
+		return xy;
 	}
 
 	GameObject GetTileByXY(int x, int y)
@@ -68,24 +92,12 @@ public class GameManager : MonoBehaviour {
 
 	void HighlightMoveArea( int x, int y, int radius)
 	{
-		int initX = x - radius;
-		int initY = y - radius;
-		int maxX = x + radius;
-		int maxY = y + radius;
-		if (initX <= 0) { initX = 1; }		
-		if (initY <= 0) { initY = 1; }
-		if (maxX > fieldSizeX) { maxX = fieldSizeX; }
-		if (maxY > fieldSizeY) { maxY = fieldSizeY; }
-
 		for (int rel_x = -radius; rel_x <= radius; rel_x++)
 		{
 			for (int rel_y = -radius; rel_y <= radius; rel_y++)
 			{
-				Debug.Log("rel_x = " + rel_x + ", rel_y = " + rel_y);
 				if (Math.Abs(rel_x) == Math.Abs(rel_y) || rel_x == 0 || rel_y == 0)
 				{
-					Debug.Log("Bingo!");
-					Debug.Log("(x + rel_x = " + (x + rel_x) + ", y + rel_y = " + (y + rel_y));
 					if (x + rel_x <= fieldSizeX && x + rel_x >= 1 && y + rel_y <= fieldSizeY && y + rel_y >= 1)
 					{
 						HighlightTile(GetTileByXY(x + rel_x, y + rel_y));
@@ -93,22 +105,6 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-
-		/*	for (int X = initX; X <= maxX; X++)
-		{
-			for (int Y = initY; Y <= maxY; Y++)
-			{
-				Debug.Log("X = " + X + ", Y = " + Y);
-				if (Math.Abs(relX) == Math.Abs(relY) || X==1 || Y == 1)
-				{
-					Debug.Log("Bingo!");
-					HighlightTile(GetTileByXY(X, Y));
-				}
-				relY++;
-			}
-			relX++;
-			relY = 1;
-		}*/
 	}
 
 	void MakeSingleton()
