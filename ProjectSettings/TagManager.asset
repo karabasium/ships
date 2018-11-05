@@ -43,9 +43,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: ships
-    uniqueID: 2114866333
-    locked: 0
   - name: tiles
     uniqueID: 1585309291
+    locked: 0
+  - name: ships
+    uniqueID: 2114866333
     locked: 0

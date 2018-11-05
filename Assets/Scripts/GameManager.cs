@@ -14,8 +14,9 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+
 		tileObj = Resources.Load("Prefabs/Tile") as GameObject;
+		Debug.Log(tileObj);
 		Renderer r = tileObj.GetComponent<Renderer>();
 		SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
 		Color initTileColor = sr.color;
@@ -39,7 +40,8 @@ public class GameManager : MonoBehaviour {
 		{
 			for (int y = 0; y < fieldSizeY; y++)
 			{
-			 	GameObject t = Instantiate(tileObj, new Vector3((screenZeroX + (x + 1) * width - width/2), (screenZeroY - (y+1)*height+height/2), 0), Quaternion.identity);
+				tileObj = Resources.Load("Prefabs/Tile") as GameObject;
+				GameObject t = Instantiate(tileObj, new Vector3((screenZeroX + (x + 1) * width - width/2), (screenZeroY - (y+1)*height+height/2), 0), Quaternion.identity);
 				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
 			}
 		}
@@ -67,6 +69,7 @@ public class GameManager : MonoBehaviour {
 	void Awake()
 	{
 		MakeSingleton();
+		//AddShip(10, 10, "brig");
 	}
 
 	int[] GetXYbyTileName( string s)
@@ -94,8 +97,9 @@ public class GameManager : MonoBehaviour {
 		s.transform.parent = t.transform;
 		s.transform.localPosition = new Vector2(0, 0);
 		HighlightTile(t);
+		MyTile tl = t.GetComponent<MyTile>();
+		tl.AddShipToTile(s);
 		ships.Add(s);
-		Debug.Log("Ship added");
 	}
 
 	void HighlightTile( GameObject tile)
