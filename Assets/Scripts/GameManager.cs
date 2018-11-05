@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour {
 	public GameObject tileObj;
 	private int fieldSizeX;
 	private int fieldSizeY;
-	Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1f);
+	List<GameObject> ships = new List<GameObject>();
+	Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
 
 	// Use this for initialization
 	void Start () {
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour {
 				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
 			}
 		}
-		
+		AddShip(10, 10, "brig");
 	}
 	
 	// Update is called once per frame
@@ -82,6 +83,19 @@ public class GameManager : MonoBehaviour {
 	GameObject GetTileByXY(int x, int y)
 	{
 		return GameObject.Find(string.Concat("tile_", (fieldSizeX * (y-1) + x).ToString()));
+	}
+
+	void AddShip(int x, int y, string name )
+	{
+		GameObject shipObj = Resources.Load("Prefabs/ship") as GameObject;
+		GameObject s = Instantiate(shipObj, new Vector3(0, 0, 0), Quaternion.identity);
+		s.name = name;
+		GameObject t = GetTileByXY(x, y);	
+		s.transform.parent = t.transform;
+		s.transform.localPosition = new Vector2(0, 0);
+		HighlightTile(t);
+		ships.Add(s);
+		Debug.Log("Ship added");
 	}
 
 	void HighlightTile( GameObject tile)
