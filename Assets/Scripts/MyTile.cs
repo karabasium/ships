@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MyTile : MonoBehaviour {
-	public GameObject ship;
+	public GameObject ship = null;
 	public GameObject tileObj;
 	public string st;
 
@@ -21,7 +21,13 @@ public class MyTile : MonoBehaviour {
 
 	public void AddShipToTile(GameObject s)
 	{
-		//ship = s;
+		ship = s;
 		Debug.Log("ship added");
+	}
+
+	public void ResetHighlight()
+	{
+		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		sr.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }

@@ -7,8 +7,10 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 	public GameObject tileObj;
+	public GameObject selectedShip = null;
 	private int fieldSizeX;
 	private int fieldSizeY;
+	private List<MyTile> highlightedTiles = new List<MyTile>();
 	List<GameObject> ships = new List<GameObject>();
 	Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
 
@@ -45,7 +47,8 @@ public class GameManager : MonoBehaviour {
 				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
 			}
 		}
-		AddShip(10, 10, "brig");
+		AddShip(3, 3, "brig");
+		AddShip(3, 7, "brig2");
 	}
 	
 	// Update is called once per frame
@@ -58,10 +61,34 @@ public class GameManager : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
 			if (hit.collider != null)
 			{
-				string tileName = hit.collider.gameObject.name;
-				int[] xy = GetXYbyTileName(tileName);
-				Debug.Log(xy);
-				HighlightMoveArea(xy[0], xy[1], 6);
+				MyTile t = hit.collider.gameObject.GetComponent<MyTile>();
+				GameObject ship = t.ship;
+				if (ship != null)
+				{
+					ResetHighlight();
+					string tileName = hit.collider.gameObject.name;
+					int[] xy = GetXYbyTileName(tileName);
+					Debug.Log(xy);
+					HighlightMoveArea(xy[0], xy[1], 6);
+					selectedShip = ship;
+				}
+				else
+				{
+					if (highlightedTiles.Contains(t))
+					{
+						Debug.Log("ship moved");
+						MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();
+						currentShipTileParent.ship = null;
+						selectedShip.transform.parent = t.transform;
+						selectedShip.transform.localPosition = new Vector2(0, 0);
+						t.GetComponent<MyTile>().AddShipToTile(selectedShip);
+						ResetHighlight();
+					}
+					else
+					{
+						Debug.Log("tile is not highlighted");
+					}
+				}
 			}
 		}
 	}
@@ -96,7 +123,6 @@ public class GameManager : MonoBehaviour {
 		GameObject t = GetTileByXY(x, y);	
 		s.transform.parent = t.transform;
 		s.transform.localPosition = new Vector2(0, 0);
-		HighlightTile(t);
 		MyTile tl = t.GetComponent<MyTile>();
 		tl.AddShipToTile(s);
 		ships.Add(s);
@@ -106,6 +132,16 @@ public class GameManager : MonoBehaviour {
 	{
 		SpriteRenderer t_sr = tile.GetComponent<SpriteRenderer>();
 		t_sr.color = highlightMoveColor;
+		highlightedTiles.Add( tile.GetComponent<MyTile>() );
+	}
+
+	void ResetHighlight()
+	{
+		foreach( MyTile t in highlightedTiles)
+		{
+			t.ResetHighlight();
+		}
+		highlightedTiles.Clear();
 	}
 
 	void HighlightMoveArea( int x, int y, int radius)
