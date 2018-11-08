@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4876565990400970}
   - component: {fileID: 212514828977525382}
-  - component: {fileID: 114602561707017074}
+  - component: {fileID: 114673792419114466}
   m_Layer: 0
   m_Name: ship
   m_TagString: ships
@@ -41,7 +41,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114602561707017074
+--- !u!114 &114673792419114466
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1302771062872938}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e41d64d7f255a744aa09f8b7bc7bed6f, type: 3}
+  m_Script: {fileID: 11500000, guid: b148becd15317274a81eee574d63104a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &212514828977525382
