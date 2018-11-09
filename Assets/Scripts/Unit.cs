@@ -5,6 +5,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour {
 	public int side;
 
+
 	// Use this for initialization
 	void Start () {
 		
@@ -14,4 +15,6 @@ public class Unit : MonoBehaviour {
 	void Update () {
 		
 	}
+
+
 }

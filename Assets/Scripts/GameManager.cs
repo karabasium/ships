@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour {
 	Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
 	public Player player_1;
 	public Player player_2;
-	private int currentPlayerSide;
+	public int currentPlayerSide;
+	private Texture2D mouseCursorAim;
 
 	private enum GameState
 	{
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour {
 		AddShip(3, 3, "brig", player_1);
 		AddShip(3, 7, "brig2", player_1);
 		AddShip(4, 8, "brig3", player_2);
+
 	}
 	
 	// Update is called once per frame
