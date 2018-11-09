@@ -7,16 +7,17 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 	public GameObject tileObj;
-	public GameObject selectedShip = null;
 	private int fieldSizeX;
 	private int fieldSizeY;
 	private List<MyTile> highlightedTiles = new List<MyTile>();
-	List<GameObject> ships = new List<GameObject>();
+	public List<GameObject> ships = new List<GameObject>();
 	Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
 	public Player player_1;
 	public Player player_2;
 	public int currentPlayerSide;
 	private Texture2D mouseCursorAim;
+	private GameState gameState = GameState.FIRE;
+	private bool someShipIsSelected = false;
 
 	private enum GameState
 	{
@@ -77,32 +78,43 @@ public class GameManager : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
 			if (hit.collider != null)
 			{
+				Debug.Log("click on " + hit.collider.gameObject.name);
 				MyTile t = hit.collider.gameObject.GetComponent<MyTile>();
-				GameObject ship = t.ship;
+				GameObject ship = null;
+				Debug.Log(t.name);
+				if (t.transform.childCount != 0)
+				{
+					ship = t.transform.GetChild(0).gameObject;
+				}
 				if (ship != null)
 				{
-					if (ship.GetComponent<Unit>().side == currentPlayerSide)
+					Unit shipUnit = ship.GetComponent<Unit>();
+					if (shipUnit.side == currentPlayerSide)
 					{
 						ResetHighlight();
 						string tileName = hit.collider.gameObject.name;
 						int[] xy = GetXYbyTileName(tileName);
 						Debug.Log(xy);
 						HighlightMoveArea(xy[0], xy[1], 6);
-						selectedShip = ship;
+						shipUnit.isSelected = true;
 					}
 					else
 					{
 						Debug.Log("You can't select an enemy ship");
+						if (gameState == GameState.FIRE && someShipIsSelected)
+						{
+							ship.GetComponent<Unit>().dealDamage(4);
+						}
 					}
 				}
 				else
 				{
 					if (highlightedTiles.Contains(t))
 					{
-						if (t.ship == null)
+						if (t.transform.childCount == 0)
 						{//move ship
-							MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();
-							currentShipTileParent.ship = null;
+							GameObject selectedShip = GetSelectedShip();
+							MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();						
 							selectedShip.transform.parent = t.transform;
 							selectedShip.transform.localPosition = new Vector2(0, 0);
 							t.GetComponent<MyTile>().AddShipToTile(selectedShip);
@@ -116,12 +128,24 @@ public class GameManager : MonoBehaviour {
 					else
 					{
 						Debug.Log("tile is not highlighted");
-						selectedShip = null;
 						ResetHighlight();
 					}
 				}
 			}
 		}
+	}
+
+	GameObject GetSelectedShip()
+	{
+		foreach (GameObject s in ships)
+		{
+			if (s.GetComponent<Unit>().isSelected)
+			{
+				return s;
+			}
+		}
+		Debug.Log("no ship is selected");
+		return null;
 	}
 
 	void Awake()
@@ -151,11 +175,7 @@ public class GameManager : MonoBehaviour {
 		GameObject shipObj = Resources.Load("Prefabs/ship") as GameObject;
 		GameObject s = Instantiate(shipObj, new Vector3(0, 0, 0), Quaternion.identity);
 		s.name = name;
-		GameObject t = GetTileByXY(x, y);	
-		s.transform.parent = t.transform;
-		s.transform.localPosition = new Vector2(0, 0);
-		MyTile tl = t.GetComponent<MyTile>();
-		tl.AddShipToTile(s);
+		GetTileByXY(x, y).GetComponent<MyTile>().AddShipToTile(s);
 		ships.Add(s);
 		s.GetComponent<Unit>().side = player.side;
 		player.units.Add(s.GetComponent<Unit>());
@@ -175,6 +195,11 @@ public class GameManager : MonoBehaviour {
 			t.ResetHighlight();
 		}
 		highlightedTiles.Clear();
+		foreach(GameObject s in ships)
+		{
+			s.GetComponent<Unit>().isSelected = false;
+		}
+		someShipIsSelected = false;
 	}
 
 	void HighlightMoveArea( int x, int y, int radius)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MyTile : MonoBehaviour {
-	public GameObject ship = null;
 	public GameObject tileObj;
 	public string st;
 	private Texture2D mouseCursorAim;
@@ -23,8 +22,9 @@ public class MyTile : MonoBehaviour {
 
 	public void AddShipToTile(GameObject s)
 	{
-		ship = s;
-		Debug.Log("ship added");
+		s.transform.parent = gameObject.transform;
+		s.transform.localPosition = new Vector2(0, 0);
+		Debug.Log("ship added to tile " + this.name);
 	}
 
 	public void ResetHighlight()
@@ -35,13 +35,17 @@ public class MyTile : MonoBehaviour {
 
 	void OnMouseOver()
 	{
-		if (ship != null)
+		if (this.gameObject.transform.childCount > 0)
 		{
-			if (ship.GetComponent<Unit>().side != GameManager.instance.currentPlayerSide)
+			GameObject ship = this.gameObject.transform.GetChild(0).gameObject;
+			if (ship != null)
 			{
-				mouseCursorAim = Resources.Load("Textures/aim") as Texture2D;
-				Cursor.SetCursor(mouseCursorAim, new Vector2(mouseCursorAim.width / 2, mouseCursorAim.height / 2), CursorMode.Auto);
-				cursorChanged = true;
+				if (ship.GetComponent<Unit>().side != GameManager.instance.currentPlayerSide)
+				{
+					mouseCursorAim = Resources.Load("Textures/aim") as Texture2D;
+					Cursor.SetCursor(mouseCursorAim, new Vector2(mouseCursorAim.width / 2, mouseCursorAim.height / 2), CursorMode.Auto);
+					cursorChanged = true;
+				}
 			}
 		}
 	}
