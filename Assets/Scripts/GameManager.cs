@@ -178,7 +178,6 @@ public class GameManager : MonoBehaviour {
 		GetTileByXY(x, y).GetComponent<MyTile>().AddShipToTile(s);
 		ships.Add(s);
 		s.GetComponent<Unit>().side = player.side;
-		player.units.Add(s.GetComponent<Unit>());
 	}
 
 	void HighlightTile( GameObject tile)

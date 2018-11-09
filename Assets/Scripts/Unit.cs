@@ -23,14 +23,6 @@ public class Unit : MonoBehaviour {
 		if (hp <= 0)
 		{
 			GameManager.instance.ships.Remove(gameObject);
-			if (side == 1)
-			{
-				GameManager.instance.player_1.units.Remove(this);
-			}
-			else
-			{
-				GameManager.instance.player_2.units.Remove(this);
-			}
 			Destroy(gameObject);
 			Debug.Log("unit destroyed");
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);

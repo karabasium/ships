@@ -5,7 +5,6 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
 	public int side;
-	public List<Unit> units = new List<Unit>();
 
 	public Player(int side)
 	{
