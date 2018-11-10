@@ -11,8 +11,7 @@ public class MyTile : MonoBehaviour {
 	// Use this for initialization
 	void Start()
 	{
-		//tileObj = Resources.Load("Prefabs/Tile") as GameObject;
-		//Instantiate(tileObj, new Vector3(0, 0, 0), Quaternion.identity);
+		gameObject.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = false;
 	}
 
 	// Update is called once per frame
@@ -25,9 +24,10 @@ public class MyTile : MonoBehaviour {
 		s.transform.parent = gameObject.transform;
 		s.transform.localPosition = new Vector2(0, 0);
 		Debug.Log("ship added to tile " + this.name);
+
 	}
 
-	public void ResetHighlight()
+	public void ResetMoveHighlight()
 	{
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -35,9 +35,9 @@ public class MyTile : MonoBehaviour {
 
 	void OnMouseOver()
 	{
-		if (this.gameObject.transform.childCount > 0)
+		if (this.gameObject.transform.Find("ship") != null)
 		{
-			GameObject ship = this.gameObject.transform.GetChild(0).gameObject;
+			GameObject ship = this.gameObject.transform.Find("ship").gameObject;
 			if (ship != null)
 			{
 				if (ship.GetComponent<Unit>().side != GameManager.instance.currentPlayerSide)

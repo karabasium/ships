@@ -6,10 +6,19 @@ public class Unit : MonoBehaviour {
 	public int side;
 	public int hp = 3;
 	public bool isSelected = false;
+	public string shipName;
+	public enum State
+
+	{
+		MOVEMENT,
+		FIRE,
+		END_TURN
+	}
+	public State state;
 
 	// Use this for initialization
 	void Start () {
-		
+		state = State.MOVEMENT;
 	}
 	
 	// Update is called once per frame
