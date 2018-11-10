@@ -92,16 +92,12 @@ public class GameManager : MonoBehaviour {
 					Unit shipUnit = ship.GetComponent<Unit>();
 					if (shipUnit.side == currentPlayerSide)
 					{
-						if (shipUnit.state == Unit.State.MOVEMENT)
-						{
-							ResetMoveHighlight();
-							string tileName = hit.collider.gameObject.name;
-							int[] xy = GetXYbyTileName(tileName);
-							Debug.Log(xy);
-							HighlightArea(xy[0], xy[1], 4, "move");
-							HighlightArea(xy[0], xy[1], 3, "fire");
-							shipUnit.isSelected = true;
-						}
+						ResetMoveHighlight();
+						string tileName = hit.collider.gameObject.name;
+						int[] xy = GetXYbyTileName(tileName);
+						HighlightArea(xy[0], xy[1], 4, "move");
+						HighlightArea(xy[0], xy[1], 3, "fire");
+						shipUnit.isSelected = true;
 					}
 					else
 					{
@@ -122,9 +118,15 @@ public class GameManager : MonoBehaviour {
 							MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();						
 							selectedShip.transform.parent = t.transform;
 							selectedShip.transform.localPosition = new Vector2(0, 0);
+							selectedShip.GetComponent<Unit>().movementCompleted = true;
 							t.GetComponent<MyTile>().AddShipToTile(selectedShip);
 							ResetMoveHighlight();
 							ResetUnderFireHighlight();
+							if (!selectedShip.GetComponent<Unit>().fireCompleted)
+							{
+								int[] xy = GetXYbyTileName(t.gameObject.name);								
+								HighlightArea(xy[0], xy[1], 3, "fire");
+							}
 						}
 						else
 						{
