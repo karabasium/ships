@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour {
 	private List<MyTile> highlightedMoveTiles = new List<MyTile>();
 	private List<MyTile> highlightedUnderFireTiles = new List<MyTile>();
 	public List<GameObject> ships = new List<GameObject>();
-	Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
+	private Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
+	private Color shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
 	public Player player_1;
 	public Player player_2;
 	public int currentPlayerSide;
@@ -66,6 +67,7 @@ public class GameManager : MonoBehaviour {
 		AddShip(3, 3, "brig", player_1);
 		AddShip(3, 7, "brig2", player_1);
 		AddShip(4, 8, "brig3", player_2);
+		AddShip(6, 8, "brig4", player_2);
 
 	}
 	
@@ -200,6 +202,13 @@ public class GameManager : MonoBehaviour {
 		else if (type == "fire")
 		{
 			tile.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = true;
+			if (tile.transform.Find("ship") != null)
+			{
+				if (tile.transform.Find("ship").GetComponent<Unit>().side != currentPlayerSide)
+				{
+					tile.transform.Find("ship").GetComponent<SpriteRenderer>().color = shipUnderFireHighlight;
+				}
+			}
 			highlightedUnderFireTiles.Add(tile.GetComponent<MyTile>());
 		}
 	}
@@ -209,6 +218,10 @@ public class GameManager : MonoBehaviour {
 		foreach (MyTile t in highlightedUnderFireTiles)
 		{
 			t.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = false;
+			if (t.transform.Find("ship") != null)
+			{
+				t.transform.Find("ship").GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			}
 		}
 		highlightedUnderFireTiles.Clear();
 	}
