@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour {
 	public int side;
 	public int hp = 3;
 	public bool isSelected = false;
+	public bool isUnderFire;
 	public string shipName;
 	public bool movementCompleted;
 	public bool fireCompleted;
@@ -14,6 +15,7 @@ public class Unit : MonoBehaviour {
 	void Start () {
 		movementCompleted = false;
 		fireCompleted = false;
+		isUnderFire = false;
 	}
 	
 	// Update is called once per frame
@@ -32,6 +34,14 @@ public class Unit : MonoBehaviour {
 			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 		}
 	}
-
+	public void MakeSelected()
+	{
+		Unit u = GameManager.instance.GetSelectedUnit();
+		if(u != null)
+		{
+			u.isSelected = false;
+		}
+		this.isSelected = true;
+	}
 
 }

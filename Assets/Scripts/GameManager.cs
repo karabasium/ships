@@ -18,14 +18,6 @@ public class GameManager : MonoBehaviour {
 	public Player player_2;
 	public int currentPlayerSide;
 	private Texture2D mouseCursorAim;
-	private GameState gameState = GameState.FIRE;
-	private bool someShipIsSelected = false;
-
-	private enum GameState
-	{
-		MOVEMENT,
-		FIRE
-	}
 
 
 
@@ -94,19 +86,25 @@ public class GameManager : MonoBehaviour {
 					Unit shipUnit = ship.GetComponent<Unit>();
 					if (shipUnit.side == currentPlayerSide)
 					{
+						shipUnit.MakeSelected();
 						ResetMoveHighlight();
 						string tileName = hit.collider.gameObject.name;
 						int[] xy = GetXYbyTileName(tileName);
-						HighlightArea(xy[0], xy[1], 4, "move");
-						HighlightArea(xy[0], xy[1], 3, "fire");
-						shipUnit.isSelected = true;
+						if (!shipUnit.movementCompleted)
+						{
+							HighlightArea(xy[0], xy[1], 4, "move");
+						}
+						if (!shipUnit.fireCompleted)
+						{
+							HighlightArea(xy[0], xy[1], 3, "fire");
+						}
 					}
 					else
 					{
-						Debug.Log("You can't select an enemy ship");
-						if (gameState == GameState.FIRE && someShipIsSelected)
+						if ( ship.GetComponent<Unit>().isUnderFire)
 						{
 							ship.GetComponent<Unit>().dealDamage(4);
+							GetSelectedUnit().fireCompleted = true;
 						}
 					}
 				}
@@ -116,18 +114,22 @@ public class GameManager : MonoBehaviour {
 					{
 						if (t.transform.Find("ship") == null)
 						{//move ship
-							GameObject selectedShip = GetSelectedShip();
-							MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();						
-							selectedShip.transform.parent = t.transform;
-							selectedShip.transform.localPosition = new Vector2(0, 0);
-							selectedShip.GetComponent<Unit>().movementCompleted = true;
-							t.GetComponent<MyTile>().AddShipToTile(selectedShip);
-							ResetMoveHighlight();
-							ResetUnderFireHighlight();
-							if (!selectedShip.GetComponent<Unit>().fireCompleted)
-							{
-								int[] xy = GetXYbyTileName(t.gameObject.name);								
-								HighlightArea(xy[0], xy[1], 3, "fire");
+							Unit selectedShip = GetSelectedUnit();
+							if (!selectedShip.GetComponent<Unit>().movementCompleted)
+							{ 
+								MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();
+								selectedShip.transform.parent = t.transform;
+								selectedShip.transform.localPosition = new Vector2(0, 0);
+								selectedShip.GetComponent<Unit>().movementCompleted = true;
+								t.GetComponent<MyTile>().AddShipToTile(selectedShip.gameObject);
+								ResetMoveHighlight();
+								ResetUnderFireHighlight();
+								selectedShip.GetComponent<Unit>().movementCompleted = true;
+								if (!selectedShip.GetComponent<Unit>().fireCompleted)
+								{
+									int[] xy = GetXYbyTileName(t.gameObject.name);
+									HighlightArea(xy[0], xy[1], 3, "fire");
+								}
 							}
 						}
 						else
@@ -145,13 +147,14 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	GameObject GetSelectedShip()
+	public Unit GetSelectedUnit()
 	{
 		foreach (GameObject s in ships)
 		{
-			if (s.GetComponent<Unit>().isSelected)
+			Unit unit = s.GetComponent<Unit>();
+			if (unit.isSelected)
 			{
-				return s;
+				return unit;
 			}
 		}
 		Debug.Log("no ship is selected");
@@ -163,6 +166,8 @@ public class GameManager : MonoBehaviour {
 		MakeSingleton();
 		//AddShip(10, 10, "brig");
 	}
+
+
 
 	int[] GetXYbyTileName( string s)
 	{
@@ -207,6 +212,7 @@ public class GameManager : MonoBehaviour {
 				if (tile.transform.Find("ship").GetComponent<Unit>().side != currentPlayerSide)
 				{
 					tile.transform.Find("ship").GetComponent<SpriteRenderer>().color = shipUnderFireHighlight;
+					tile.transform.Find("ship").GetComponent<Unit>().isUnderFire = true;
 				}
 			}
 			highlightedUnderFireTiles.Add(tile.GetComponent<MyTile>());
@@ -221,6 +227,7 @@ public class GameManager : MonoBehaviour {
 			if (t.transform.Find("ship") != null)
 			{
 				t.transform.Find("ship").GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+				t.transform.Find("ship").GetComponent<Unit>().isUnderFire = false;
 			}
 		}
 		highlightedUnderFireTiles.Clear();
@@ -233,11 +240,6 @@ public class GameManager : MonoBehaviour {
 			t.ResetMoveHighlight();
 		}
 		highlightedMoveTiles.Clear();
-		foreach(GameObject s in ships)
-		{
-			s.GetComponent<Unit>().isSelected = false;
-		}
-		someShipIsSelected = false;
 	}
 
 	void HighlightArea( int x, int y, int radius, string type)

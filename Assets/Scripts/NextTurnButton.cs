@@ -16,15 +16,26 @@ public class NextTurnButton : MonoBehaviour {
 
 	public void OnButtonClick()
 	{
-		if (GameManager.instance.currentPlayerSide == 1)
+		int nextPlayer = 2;
+		if (GameManager.instance.currentPlayerSide == 2)
 		{
-			GameManager.instance.currentPlayerSide = 2;
-			Debug.Log("Current player is 2");
+			nextPlayer = 1;
 		}
-		else
+		GameManager.instance.currentPlayerSide = nextPlayer;
+		ResetPlayerShipsActions(nextPlayer);
+	}
+
+	void ResetPlayerShipsActions(int playerSide )
+	{
+		foreach (GameObject shipObj in GameManager.instance.ships)
 		{
-			GameManager.instance.currentPlayerSide = 1;
-			Debug.Log("Current player is 1");
+			Unit unit = shipObj.GetComponent<Unit>();
+			if (unit.side == playerSide)
+			{
+				unit.movementCompleted = false;
+				unit.fireCompleted = false;
+			}
 		}
+		GameManager.instance.GetSelectedUnit().isSelected = false;
 	}
 }
