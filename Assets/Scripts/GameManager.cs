@@ -12,13 +12,13 @@ public class GameManager : MonoBehaviour {
 	private List<MyTile> highlightedMoveTiles = new List<MyTile>();
 	private List<MyTile> highlightedUnderFireTiles = new List<MyTile>();
 	public List<GameObject> ships = new List<GameObject>();
-	private Color highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
-	private Color shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
+	private Color highlightMoveColor;
+	private Color shipUnderFireHighlight;
 	public Player player_1;
 	public Player player_2;
 	public int currentPlayerSide;
 	private Texture2D mouseCursorAim;
-	public float HitProbability = 1.0f;
+	public float HitProbability;
 
 
 
@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour {
 		player_1 = new Player( 1 );
 		player_2 = new Player( 2 );
 		currentPlayerSide = player_1.side;
+		highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
+		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
 
 		float width = r.bounds.size[0];
 		float height = r.bounds.size[1];
@@ -61,7 +63,8 @@ public class GameManager : MonoBehaviour {
 		AddShip(3, 7, "brig2", player_1);
 		AddShip(4, 8, "brig3", player_2);
 		AddShip(6, 8, "brig4", player_2);
-
+		HitProbability = 0.5f;
+		Debug.Log(HitProbability);
 	}
 	
 	// Update is called once per frame
@@ -104,8 +107,9 @@ public class GameManager : MonoBehaviour {
 					{
 						if ( ship.GetComponent<Unit>().isUnderFire)
 						{
-							ship.GetComponent<Unit>().dealDamage(4);
+							ship.GetComponent<Unit>().dealDamage(1);
 							GetSelectedUnit().fireCompleted = true;
+							ResetUnderFireHighlight();
 						}
 					}
 				}

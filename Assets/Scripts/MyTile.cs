@@ -6,12 +6,13 @@ public class MyTile : MonoBehaviour {
 	public GameObject tileObj;
 	public string st;
 	private Texture2D mouseCursorAim;
-	private bool cursorChanged = false;
+	private bool cursorChanged;
 
 	// Use this for initialization
 	void Start()
 	{
 		gameObject.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = false;
+		cursorChanged = false;
 	}
 
 	// Update is called once per frame

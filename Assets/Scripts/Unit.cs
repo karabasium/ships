@@ -4,18 +4,39 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour {
 	public int side;
-	public int hp = 3;
-	public bool isSelected = false;
+	public int hp;
+	public bool isSelected;
 	public bool isUnderFire;
 	public string shipName;
 	public bool movementCompleted;
 	public bool fireCompleted;
+	private float height;
+	private float width;
+	public List<GameObject> hp_spots = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {
 		movementCompleted = false;
 		fireCompleted = false;
 		isUnderFire = false;
+		hp = 3;
+		isSelected = false;
+		SpriteRenderer sr = gameObject.GetComponent<SpriteRenderer>() as SpriteRenderer;
+		height = sr.bounds.size.y;
+		width = sr.bounds.size.x;
+		Debug.Log("height = " + height.ToString() + ", width = " + width.ToString());
+		GameObject HP = Resources.Load("Prefabs/HP") as GameObject;	
+		float hp_width = HP.GetComponent<SpriteRenderer>().bounds.size.x;
+		float hp_space = hp_width / 4;
+		float total_len = hp * hp_width + (hp - 1) * hp_space;		
+		Vector3 pos = gameObject.transform.position;
+		float start_x = pos[0] - total_len / 2 + hp_width / 2;
+		for (int i=0; i < hp; i++)
+		{
+			GameObject hpObj = Instantiate(HP, new Vector3(start_x + (hp_width + hp_space) * i, pos[1] - 0.6f * height, 0), Quaternion.identity);
+			hpObj.transform.parent = gameObject.transform;
+			hp_spots.Add( hpObj );
+		}
 	}
 	
 	// Update is called once per frame
@@ -25,17 +46,14 @@ public class Unit : MonoBehaviour {
 
 	public void dealDamage(int dmg)
 	{
-		GameObject flyOffTextObj = Resources.Load("Prefabs/FlyOffText") as GameObject;
-		Vector3 unitPos = gameObject.transform.position;
-		Instantiate(flyOffTextObj, unitPos, Quaternion.identity);
 
 		float rnd = Random.Range(0.0f, 1.0f);
 		Debug.Log(rnd);
+		Debug.Log(GameManager.instance.HitProbability);
 		if (rnd <= GameManager.instance.HitProbability)
 		{
-			flyOffTextObj.GetComponent<TextMesh>().text = "Hit!";
 			hp -= dmg;
-			Debug.Log(rnd);
+			Debug.Log("Hit!");
 			if (hp <= 0)
 			{
 				GameManager.instance.ships.Remove(gameObject);
@@ -43,11 +61,22 @@ public class Unit : MonoBehaviour {
 				Debug.Log("unit destroyed");
 				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 			}
+			else
+			{
+				for (int i = 0; i < dmg; i++)
+				{
+					GameObject gameObjToRemove = hp_spots[hp_spots.Count - 1];
+					hp_spots.RemoveAt(hp_spots.Count - 1);
+					Destroy(gameObjToRemove);
+					Debug.Log("hp removed");
+				}
+			}
 		}
 		else
 		{
-			flyOffTextObj.GetComponent<TextMesh>().text = "miss!";
+			Debug.Log("miss!");
 		}
+		Debug.Log(rnd);
 	}
 	public void MakeSelected()
 	{
