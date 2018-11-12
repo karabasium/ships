@@ -298,6 +298,7 @@ MonoBehaviour:
   player_1: {fileID: 0}
   player_2: {fileID: 0}
   currentPlayerSide: 0
+  HitProbability: 0.5
 --- !u!4 &692969787
 Transform:
   m_ObjectHideFlags: 0
@@ -506,7 +507,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -1243257925
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &1263341236

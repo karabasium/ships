@@ -49,3 +49,9 @@ TagManager:
   - name: ships
     uniqueID: 2114866333
     locked: 0
+  - name: tile_fire_highlight
+    uniqueID: 2921604157
+    locked: 0
+  - name: ui
+    uniqueID: 3051709371
+    locked: 0

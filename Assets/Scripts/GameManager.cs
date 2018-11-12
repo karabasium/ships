@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
 	public Player player_2;
 	public int currentPlayerSide;
 	private Texture2D mouseCursorAim;
+	public float HitProbability = 1.0f;
 
 
 
@@ -157,7 +158,7 @@ public class GameManager : MonoBehaviour {
 				return unit;
 			}
 		}
-		Debug.Log("no ship is selected");
+		// Debug.Log("no ship is selected");
 		return null;
 	}
 
@@ -219,7 +220,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	void ResetUnderFireHighlight()
+	public void ResetUnderFireHighlight()
 	{
 		foreach (MyTile t in highlightedUnderFireTiles)
 		{
@@ -233,7 +234,7 @@ public class GameManager : MonoBehaviour {
 		highlightedUnderFireTiles.Clear();
 	}
 
-	void ResetMoveHighlight()
+	public void ResetMoveHighlight()
 	{
 		foreach( MyTile t in highlightedMoveTiles)
 		{

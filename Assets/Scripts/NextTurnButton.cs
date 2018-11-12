@@ -37,5 +37,7 @@ public class NextTurnButton : MonoBehaviour {
 			}
 		}
 		GameManager.instance.GetSelectedUnit().isSelected = false;
+		GameManager.instance.ResetMoveHighlight();
+		GameManager.instance.ResetUnderFireHighlight();
 	}
 }

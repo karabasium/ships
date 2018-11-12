@@ -37,10 +37,11 @@ public class MyTile : MonoBehaviour {
 	{
 		if (this.gameObject.transform.Find("ship") != null)
 		{
-			GameObject ship = this.gameObject.transform.Find("ship").gameObject;
+			Unit ship = this.gameObject.transform.Find("ship").gameObject.GetComponent<Unit>();
 			if (ship != null)
 			{
-				if (ship.GetComponent<Unit>().side != GameManager.instance.currentPlayerSide)
+				Unit selectedShip = GameManager.instance.GetSelectedUnit();
+				if (ship.isUnderFire && selectedShip!=null)
 				{
 					mouseCursorAim = Resources.Load("Textures/aim") as Texture2D;
 					Cursor.SetCursor(mouseCursorAim, new Vector2(mouseCursorAim.width / 2, mouseCursorAim.height / 2), CursorMode.Auto);

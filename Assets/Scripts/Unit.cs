@@ -25,13 +25,28 @@ public class Unit : MonoBehaviour {
 
 	public void dealDamage(int dmg)
 	{
-		hp -= dmg;
-		if (hp <= 0)
+		GameObject flyOffTextObj = Resources.Load("Prefabs/FlyOffText") as GameObject;
+		Vector3 unitPos = gameObject.transform.position;
+		Instantiate(flyOffTextObj, unitPos, Quaternion.identity);
+
+		float rnd = Random.Range(0.0f, 1.0f);
+		Debug.Log(rnd);
+		if (rnd <= GameManager.instance.HitProbability)
 		{
-			GameManager.instance.ships.Remove(gameObject);
-			Destroy(gameObject);
-			Debug.Log("unit destroyed");
-			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+			flyOffTextObj.GetComponent<TextMesh>().text = "Hit!";
+			hp -= dmg;
+			Debug.Log(rnd);
+			if (hp <= 0)
+			{
+				GameManager.instance.ships.Remove(gameObject);
+				Destroy(gameObject);
+				Debug.Log("unit destroyed");
+				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+			}
+		}
+		else
+		{
+			flyOffTextObj.GetComponent<TextMesh>().text = "miss!";
 		}
 	}
 	public void MakeSelected()
