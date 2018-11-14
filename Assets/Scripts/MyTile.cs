@@ -11,6 +11,12 @@ public class MyTile : MonoBehaviour {
 	// Use this for initialization
 	void Start()
 	{
+		//gameObject.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = false;
+		//cursorChanged = false;
+	}
+
+	void Awake()
+	{
 		gameObject.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = false;
 		cursorChanged = false;
 	}

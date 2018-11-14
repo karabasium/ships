@@ -16,15 +16,11 @@ public class Unit : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		movementCompleted = false;
-		fireCompleted = false;
-		isUnderFire = false;
 		hp = 3;
-		isSelected = false;
 		SpriteRenderer sr = gameObject.GetComponent<SpriteRenderer>() as SpriteRenderer;
 		height = sr.bounds.size.y;
 		width = sr.bounds.size.x;
-		Debug.Log("height = " + height.ToString() + ", width = " + width.ToString());
+		//Debug.Log("height = " + height.ToString() + ", width = " + width.ToString());
 		GameObject HP = Resources.Load("Prefabs/HP") as GameObject;	
 		float hp_width = HP.GetComponent<SpriteRenderer>().bounds.size.x;
 		float hp_space = hp_width / 4;
@@ -39,9 +35,16 @@ public class Unit : MonoBehaviour {
 		}
 	}
 	
+	void Awake()
+	{
+		isSelected = false;
+		movementCompleted = false;
+		fireCompleted = false;
+		isUnderFire = false;
+	}
+
 	// Update is called once per frame
 	void Update () {
-		
 	}
 
 	public void dealDamage(int dmg)
@@ -86,6 +89,7 @@ public class Unit : MonoBehaviour {
 			u.isSelected = false;
 		}
 		this.isSelected = true;
+		Debug.Log("ship " + this.shipName + " is selected");
 	}
 
 }

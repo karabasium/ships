@@ -63,6 +63,12 @@ public class GameManager : MonoBehaviour {
 		AddShip(3, 7, "brig2", player_1);
 		AddShip(4, 8, "brig3", player_2);
 		AddShip(6, 8, "brig4", player_2);
+		//int n = GetPlayerUnits(1).Count - 1;
+		//List<Unit> playerShips = GetPlayerUnits(1);
+		//int rnd = UnityEngine.Random.Range(0, 1);
+		//Unit a = playerShips[UnityEngine.Random.Range(0, playerShips.Count-1) ];
+		//SelectUnit(a);
+		SelectUnit(GetPlayerUnits(1)[0]);
 		HitProbability = 0.5f;
 		Debug.Log(HitProbability);
 	}
@@ -90,18 +96,7 @@ public class GameManager : MonoBehaviour {
 					Unit shipUnit = ship.GetComponent<Unit>();
 					if (shipUnit.side == currentPlayerSide)
 					{
-						shipUnit.MakeSelected();
-						ResetMoveHighlight();
-						string tileName = hit.collider.gameObject.name;
-						int[] xy = GetXYbyTileName(tileName);
-						if (!shipUnit.movementCompleted)
-						{
-							HighlightArea(xy[0], xy[1], 4, "move");
-						}
-						if (!shipUnit.fireCompleted)
-						{
-							HighlightArea(xy[0], xy[1], 3, "fire");
-						}
+						SelectUnit(shipUnit);
 					}
 					else
 					{
@@ -132,8 +127,7 @@ public class GameManager : MonoBehaviour {
 								selectedShip.GetComponent<Unit>().movementCompleted = true;
 								if (!selectedShip.GetComponent<Unit>().fireCompleted)
 								{
-									int[] xy = GetXYbyTileName(t.gameObject.name);
-									HighlightArea(xy[0], xy[1], 3, "fire");
+									HighlightArea(hit.collider.gameObject, 3, "fire");
 								}
 							}
 						}
@@ -172,7 +166,22 @@ public class GameManager : MonoBehaviour {
 		//AddShip(10, 10, "brig");
 	}
 
-
+	public void SelectUnit(Unit u)
+	{
+		u.MakeSelected();
+		ResetMoveHighlight();
+		ResetUnderFireHighlight();
+		if (!u.movementCompleted)
+		{
+			HighlightArea(u.transform.parent.gameObject, 4, "move");
+			Debug.Log("move highilighted");
+		}
+		if (!u.fireCompleted)
+		{
+			HighlightArea(u.transform.parent.gameObject, 3, "fire");
+			Debug.Log("Fire highlighted");
+		}
+	}
 
 	int[] GetXYbyTileName( string s)
 	{
@@ -212,6 +221,7 @@ public class GameManager : MonoBehaviour {
 		else if (type == "fire")
 		{
 			tile.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = true;
+			//Debug.Log("under fire tile enabled");
 			if (tile.transform.Find("ship") != null)
 			{
 				if (tile.transform.Find("ship").GetComponent<Unit>().side != currentPlayerSide)
@@ -247,8 +257,11 @@ public class GameManager : MonoBehaviour {
 		highlightedMoveTiles.Clear();
 	}
 
-	void HighlightArea( int x, int y, int radius, string type)
+	void HighlightArea(GameObject t, int radius, string type)
 	{
+		int[] xy = GetXYbyTileName(t.gameObject.name);
+		int x = xy[0];
+		int y = xy[1];
 		for (int rel_x = -radius; rel_x <= radius; rel_x++)
 		{
 			for (int rel_y = -radius; rel_y <= radius; rel_y++)
@@ -262,6 +275,19 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public List<Unit> GetPlayerUnits(int side)
+	{
+		List<Unit> playerUnits = new List<Unit>();
+		foreach (GameObject s in ships)
+		{
+			if (s.GetComponent<Unit>().side == side)
+			{
+				playerUnits.Add(s.GetComponent<Unit>());
+			}
+		}
+		return playerUnits;
 	}
 
 	void MakeSingleton()
