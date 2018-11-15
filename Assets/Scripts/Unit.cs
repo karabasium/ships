@@ -10,31 +10,37 @@ public class Unit : MonoBehaviour {
 	public string shipName;
 	public bool movementCompleted;
 	public bool fireCompleted;
+	public int shotsCount;
+	private int maxShotsCount;
 	private float height;
 	private float width;
 	public List<GameObject> hp_spots = new List<GameObject>();
+	private SpriteRenderer shipSprite;
 
 	// Use this for initialization
 	void Start () {
 		hp = 3;
-		SpriteRenderer sr = gameObject.GetComponent<SpriteRenderer>() as SpriteRenderer;
-		height = sr.bounds.size.y;
-		width = sr.bounds.size.x;
+	}
+	
+	void AddHPVisual()
+	{
+		height = shipSprite.bounds.size.y;
+		width = shipSprite.bounds.size.x;
 		//Debug.Log("height = " + height.ToString() + ", width = " + width.ToString());
-		GameObject HP = Resources.Load("Prefabs/HP") as GameObject;	
+		GameObject HP = Resources.Load("Prefabs/HP") as GameObject;
 		float hp_width = HP.GetComponent<SpriteRenderer>().bounds.size.x;
 		float hp_space = hp_width / 4;
-		float total_len = hp * hp_width + (hp - 1) * hp_space;		
+		float total_len = hp * hp_width + (hp - 1) * hp_space;
 		Vector3 pos = gameObject.transform.position;
 		float start_x = pos[0] - total_len / 2 + hp_width / 2;
-		for (int i=0; i < hp; i++)
+		for (int i = 0; i < hp; i++)
 		{
 			GameObject hpObj = Instantiate(HP, new Vector3(start_x + (hp_width + hp_space) * i, pos[1] - 0.6f * height, 0), Quaternion.identity);
 			hpObj.transform.parent = gameObject.transform;
-			hp_spots.Add( hpObj );
+			hp_spots.Add(hpObj);
 		}
 	}
-	
+
 	void Awake()
 	{
 		isSelected = false;
@@ -92,4 +98,48 @@ public class Unit : MonoBehaviour {
 		Debug.Log("ship " + this.shipName + " is selected");
 	}
 
+	public void SetupShip( string ship_class, int side, string name)
+	{
+		shipSprite = gameObject.transform.Find(ship_class).GetComponent<SpriteRenderer>();
+		shipSprite.enabled = true;
+		shipName = name;
+		this.side = side;		
+		if (ship_class == "brig")
+		{
+			hp = 3;
+			maxShotsCount = 1;
+			shotsCount = maxShotsCount;
+		}
+		else
+		{
+			if (ship_class == "ship_of_the_line_2deck")
+			{
+				hp = 5;
+				maxShotsCount = 2;
+				shotsCount = maxShotsCount;
+			}
+		}
+		AddHPVisual();
+	}
+	public void SetColor(Color color)
+	{
+		shipSprite.GetComponent<SpriteRenderer>().color = color;
+	}
+
+	public void Fire()
+	{
+		shotsCount--;
+		if (shotsCount <= 0)
+		{
+			fireCompleted = true;
+			shotsCount = 0;
+		}
+	}
+
+	public void NextTurnSetup()
+	{
+		movementCompleted = false;
+		fireCompleted = false;
+		shotsCount = maxShotsCount;
+	}
 }

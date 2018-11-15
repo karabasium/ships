@@ -59,10 +59,10 @@ public class GameManager : MonoBehaviour {
 				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
 			}
 		}
-		AddShip(3, 3, "brig", player_1);
-		AddShip(3, 7, "brig2", player_1);
-		AddShip(4, 8, "brig3", player_2);
-		AddShip(6, 8, "brig4", player_2);
+		AddShip(3, 3, "brig", "brig", player_1);
+		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
+		AddShip(4, 8, "brig3", "brig", player_2);
+		AddShip(6, 8, "brig4", "brig", player_2);
 		//int n = GetPlayerUnits(1).Count - 1;
 		//List<Unit> playerShips = GetPlayerUnits(1);
 		//int rnd = UnityEngine.Random.Range(0, 1);
@@ -103,8 +103,11 @@ public class GameManager : MonoBehaviour {
 						if ( ship.GetComponent<Unit>().isUnderFire)
 						{
 							ship.GetComponent<Unit>().dealDamage(1);
-							GetSelectedUnit().fireCompleted = true;
-							ResetUnderFireHighlight();
+							GetSelectedUnit().Fire();
+							if (GetSelectedUnit().fireCompleted)
+							{
+								ResetUnderFireHighlight();
+							}
 						}
 					}
 				}
@@ -199,15 +202,14 @@ public class GameManager : MonoBehaviour {
 		return GameObject.Find(string.Concat("tile_", (fieldSizeX * (y-1) + x).ToString()));
 	}
 
-	void AddShip(int x, int y, string name, Player player )
+	void AddShip(int x, int y, string name, string ship_class, Player player )
 	{
 		GameObject shipObj = Resources.Load("Prefabs/ship") as GameObject;
 		GameObject s = Instantiate(shipObj, new Vector3(0, 0, 0), Quaternion.identity);
 		s.name = "ship";
+		s.GetComponent<Unit>().SetupShip(ship_class, player.side, name);		
 		GetTileByXY(x, y).GetComponent<MyTile>().AddShipToTile(s);
 		ships.Add(s);
-		s.GetComponent<Unit>().side = player.side;
-		s.GetComponent<Unit>().shipName = name;
 	}
 
 	void HighlightTile( GameObject tile, string type)
@@ -226,7 +228,7 @@ public class GameManager : MonoBehaviour {
 			{
 				if (tile.transform.Find("ship").GetComponent<Unit>().side != currentPlayerSide)
 				{
-					tile.transform.Find("ship").GetComponent<SpriteRenderer>().color = shipUnderFireHighlight;
+					tile.transform.Find("ship").GetComponent<Unit>().SetColor( shipUnderFireHighlight ); ;
 					tile.transform.Find("ship").GetComponent<Unit>().isUnderFire = true;
 				}
 			}
@@ -241,7 +243,7 @@ public class GameManager : MonoBehaviour {
 			t.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = false;
 			if (t.transform.Find("ship") != null)
 			{
-				t.transform.Find("ship").GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+				t.transform.Find("ship").GetComponent<Unit>().SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
 				t.transform.Find("ship").GetComponent<Unit>().isUnderFire = false;
 			}
 		}

@@ -33,8 +33,7 @@ public class NextTurnButton : MonoBehaviour {
 			Unit unit = shipObj.GetComponent<Unit>();
 			if (unit.side == playerSide)
 			{
-				unit.movementCompleted = false;
-				unit.fireCompleted = false;
+				unit.NextTurnSetup();
 			}
 		}
 		GameManager.instance.GetSelectedUnit().isSelected = false;
