@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NextTurnButton : MonoBehaviour {
+public class HUD : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -14,7 +14,7 @@ public class NextTurnButton : MonoBehaviour {
 		
 	}
 
-	public void OnButtonClick()
+	public void NextTurn()
 	{
 		int nextPlayer = 2;
 		if (GameManager.instance.currentPlayerSide == 2)
@@ -39,5 +39,18 @@ public class NextTurnButton : MonoBehaviour {
 		GameManager.instance.GetSelectedUnit().isSelected = false;
 		GameManager.instance.ResetMoveHighlight();
 		GameManager.instance.ResetUnderFireHighlight();
+	}
+
+	public static void NextShip()
+	{
+		Unit selectedShip = GameManager.instance.GetSelectedUnit();
+		foreach(Unit u in GameManager.instance.GetPlayerUnits(GameManager.instance.currentPlayerSide))
+		{
+			if (u != selectedShip && (!u.movementCompleted || !u.fireCompleted))
+			{
+				GameManager.instance.SelectUnit(u);
+				break;
+			}
+		}
 	}
 }

@@ -53,8 +53,8 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\FlyOffText.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\HUD.cs" />
      <Compile Include="Assets\Scripts\MyTile.cs" />
-     <Compile Include="Assets\Scripts\NextTurnButton.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\Ship.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />

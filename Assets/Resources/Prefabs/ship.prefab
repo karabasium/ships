@@ -144,6 +144,7 @@ MonoBehaviour:
   shipName: 
   movementCompleted: 0
   fireCompleted: 0
+  shotsCount: 0
   hp_spots: []
 --- !u!212 &212363652343772732
 SpriteRenderer:

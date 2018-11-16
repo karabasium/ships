@@ -57,12 +57,15 @@ public class Unit : MonoBehaviour {
 	{
 
 		float rnd = Random.Range(0.0f, 1.0f);
-		Debug.Log(rnd);
-		Debug.Log(GameManager.instance.HitProbability);
+		Vector3 pos = gameObject.transform.position;
+		GameObject flyOffText = Instantiate (Resources.Load("Prefabs/FlyOffText") as GameObject, pos, Quaternion.identity);
+		flyOffText.transform.parent = gameObject.transform;
+
 		if (rnd <= GameManager.instance.HitProbability)
 		{
 			hp -= dmg;
 			Debug.Log("Hit!");
+			flyOffText.GetComponent<TextMesh>().text = "Hit!";
 			if (hp <= 0)
 			{
 				GameManager.instance.ships.Remove(gameObject);
@@ -83,6 +86,7 @@ public class Unit : MonoBehaviour {
 		}
 		else
 		{
+			flyOffText.GetComponent<TextMesh>().text = "Miss!";
 			Debug.Log("miss!");
 		}
 		Debug.Log(rnd);

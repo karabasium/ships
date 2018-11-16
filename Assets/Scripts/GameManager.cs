@@ -73,8 +73,14 @@ public class GameManager : MonoBehaviour {
 		Debug.Log(HitProbability);
 	}
 	
+
+
 	// Update is called once per frame
 	void Update () {
+		if (GetSelectedUnit().fireCompleted && GetSelectedUnit().movementCompleted)
+		{
+			HUD.NextShip();
+		}
 		if (Input.GetMouseButtonDown(0))
 		{
 			Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
