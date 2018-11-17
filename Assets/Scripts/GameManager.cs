@@ -136,12 +136,12 @@ public class GameManager : MonoBehaviour {
 						}
 						else
 						{
-							Debug.Log("Tile is already occupied");
+							//Debug.Log("Tile is already occupied");
 						}
 					}
 					else
 					{
-						Debug.Log("tile is not highlighted");
+						//Debug.Log("tile is not highlighted");
 						ResetMoveHighlight();
 					}
 				}
@@ -167,7 +167,11 @@ public class GameManager : MonoBehaviour {
 	{
 		MakeSingleton();
 		HitProbability = 0.25f;
+		Weather w = GetComponent<Weather>();
+		Debug.Log("DISTANCE = " + w.DistanceToCurrentWind( -1, 1).ToString());
 	}
+
+
 
 	public void SelectUnit(Unit u)
 	{
@@ -177,12 +181,12 @@ public class GameManager : MonoBehaviour {
 		if (!u.movementCompleted)
 		{
 			HighlightArea(u.transform.parent.gameObject, u.movementRange, "move");
-			Debug.Log("move highilighted");
+			//Debug.Log("move highilighted");
 		}
 		if (!u.fireCompleted)
 		{
 			HighlightArea(u.transform.parent.gameObject, u.fireRange, "fire");
-			Debug.Log("Fire highlighted");
+			//Debug.Log("Fire highlighted");
 		}
 	}
 
@@ -272,6 +276,7 @@ public class GameManager : MonoBehaviour {
 		int[] xy = GetXYbyTileName(t.gameObject.name);
 		int x = xy[0];
 		int y = xy[1];
+		Weather w = GetComponent<Weather>();
 		for (int rel_x = -radius; rel_x <= radius; rel_x++)
 		{
 			for (int rel_y = -radius; rel_y <= radius; rel_y++)
@@ -280,7 +285,18 @@ public class GameManager : MonoBehaviour {
 				{
 					if (x + rel_x <= fieldSizeX && x + rel_x >= 1 && y + rel_y <= fieldSizeY && y + rel_y >= 1)
 					{
-						HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
+						if (type == "move")
+						{
+							int rad = Math.Max(Math.Abs(rel_x), Math.Abs(rel_y));
+							if (rad <= radius - w.DistanceToCurrentWind(rel_x, rel_y))
+							{
+								HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
+							}
+						}
+						else
+						{
+							HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
+						}
 					}
 				}
 			}
@@ -321,7 +337,7 @@ public class GameManager : MonoBehaviour {
 			if (u != selectedShip && (!u.movementCompleted || !u.fireCompleted))
 			{
 				SelectUnit(u);
-				Debug.Log("NextShip(): " + u.shipName + " is selected");
+				//Debug.Log("NextShip(): " + u.shipName + " is selected");
 				break;
 			}
 		}
