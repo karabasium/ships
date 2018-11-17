@@ -14,6 +14,8 @@ public class Unit : MonoBehaviour {
 	private int maxShotsCount;
 	private float height;
 	private float width;
+	public int fireRange;
+	public int movementRange;
 	public List<GameObject> hp_spots = new List<GameObject>();
 	private SpriteRenderer shipSprite;
 
@@ -113,6 +115,8 @@ public class Unit : MonoBehaviour {
 			hp = 3;
 			maxShotsCount = 1;
 			shotsCount = maxShotsCount;
+			fireRange = 3;
+			movementRange = 5;
 		}
 		else
 		{
@@ -121,6 +125,19 @@ public class Unit : MonoBehaviour {
 				hp = 5;
 				maxShotsCount = 2;
 				shotsCount = maxShotsCount;
+				fireRange = 5;
+				movementRange = 5;
+			}
+			else
+			{
+				if (ship_class == "galera")
+				{
+					hp = 3;
+					maxShotsCount = 1;
+					shotsCount = maxShotsCount;
+					fireRange = 3;
+					movementRange = 5;
+				}
 			}
 		}
 		AddHPVisual();

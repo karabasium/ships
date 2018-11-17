@@ -41,16 +41,9 @@ public class HUD : MonoBehaviour {
 		GameManager.instance.ResetUnderFireHighlight();
 	}
 
-	public static void NextShip()
+	public void NextShip()
 	{
-		Unit selectedShip = GameManager.instance.GetSelectedUnit();
-		foreach(Unit u in GameManager.instance.GetPlayerUnits(GameManager.instance.currentPlayerSide))
-		{
-			if (u != selectedShip && (!u.movementCompleted || !u.fireCompleted))
-			{
-				GameManager.instance.SelectUnit(u);
-				break;
-			}
-		}
+		Debug.Log("NextShip(): Button clicked");
+		GameManager.instance.NextShip();
 	}
 }

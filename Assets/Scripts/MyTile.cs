@@ -30,7 +30,7 @@ public class MyTile : MonoBehaviour {
 	{
 		s.transform.parent = gameObject.transform;
 		s.transform.localPosition = new Vector2(0, 0);
-		Debug.Log("ship added to tile " + this.name);
+		//Debug.Log("ship added to tile " + this.name);
 
 	}
 

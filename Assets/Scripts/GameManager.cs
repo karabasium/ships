@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
 		tileObj = Resources.Load("Prefabs/Tile") as GameObject;
-		Debug.Log(tileObj);
+		//Debug.Log(tileObj);
 		Renderer r = tileObj.GetComponent<Renderer>();
 		SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
 		Color initTileColor = sr.color;
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour {
 		player_1 = new Player( 1 );
 		player_2 = new Player( 2 );
 		currentPlayerSide = player_1.side;
-		highlightMoveColor = new Color(1.0f, 0.5f, 1.0f, 1.0f);
+		highlightMoveColor = new Color(0.75f, 0.95f, 1.0f, 1.0f);
 		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
 
 		float width = r.bounds.size[0];
@@ -63,14 +63,8 @@ public class GameManager : MonoBehaviour {
 		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
 		AddShip(4, 8, "brig3", "brig", player_2);
 		AddShip(6, 8, "brig4", "brig", player_2);
-		//int n = GetPlayerUnits(1).Count - 1;
-		//List<Unit> playerShips = GetPlayerUnits(1);
-		//int rnd = UnityEngine.Random.Range(0, 1);
-		//Unit a = playerShips[UnityEngine.Random.Range(0, playerShips.Count-1) ];
-		//SelectUnit(a);
+		AddShip(4, 7, "galera1", "galera", player_2);
 		SelectUnit(GetPlayerUnits(1)[0]);
-		HitProbability = 0.5f;
-		Debug.Log(HitProbability);
 	}
 	
 
@@ -79,7 +73,7 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		if (GetSelectedUnit().fireCompleted && GetSelectedUnit().movementCompleted)
 		{
-			HUD.NextShip();
+			NextShip();
 		}
 		if (Input.GetMouseButtonDown(0))
 		{
@@ -89,10 +83,10 @@ public class GameManager : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
 			if (hit.collider != null)
 			{
-				Debug.Log("click on " + hit.collider.gameObject.name);
+				//Debug.Log("click on " + hit.collider.gameObject.name);
 				MyTile t = hit.collider.gameObject.GetComponent<MyTile>();
 				GameObject ship = null;
-				Debug.Log(t.name);
+				//Debug.Log(t.name);
 				if (t.transform.Find("ship") != null)
 				{
 					ship = t.transform.Find("ship").gameObject;
@@ -136,7 +130,7 @@ public class GameManager : MonoBehaviour {
 								selectedShip.GetComponent<Unit>().movementCompleted = true;
 								if (!selectedShip.GetComponent<Unit>().fireCompleted)
 								{
-									HighlightArea(hit.collider.gameObject, 3, "fire");
+									HighlightArea(hit.collider.gameObject, selectedShip.GetComponent<Unit>().fireRange, "fire");
 								}
 							}
 						}
@@ -172,7 +166,7 @@ public class GameManager : MonoBehaviour {
 	void Awake()
 	{
 		MakeSingleton();
-		//AddShip(10, 10, "brig");
+		HitProbability = 0.25f;
 	}
 
 	public void SelectUnit(Unit u)
@@ -182,12 +176,12 @@ public class GameManager : MonoBehaviour {
 		ResetUnderFireHighlight();
 		if (!u.movementCompleted)
 		{
-			HighlightArea(u.transform.parent.gameObject, 4, "move");
+			HighlightArea(u.transform.parent.gameObject, u.movementRange, "move");
 			Debug.Log("move highilighted");
 		}
 		if (!u.fireCompleted)
 		{
-			HighlightArea(u.transform.parent.gameObject, 3, "fire");
+			HighlightArea(u.transform.parent.gameObject, u.fireRange, "fire");
 			Debug.Log("Fire highlighted");
 		}
 	}
@@ -228,8 +222,8 @@ public class GameManager : MonoBehaviour {
 		}
 		else if (type == "fire")
 		{
-			tile.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = true;
 			//Debug.Log("under fire tile enabled");
+			bool needHighlight = true;
 			if (tile.transform.Find("ship") != null)
 			{
 				if (tile.transform.Find("ship").GetComponent<Unit>().side != currentPlayerSide)
@@ -237,8 +231,16 @@ public class GameManager : MonoBehaviour {
 					tile.transform.Find("ship").GetComponent<Unit>().SetColor( shipUnderFireHighlight ); ;
 					tile.transform.Find("ship").GetComponent<Unit>().isUnderFire = true;
 				}
+				else
+				{
+					needHighlight = false;
+				}
 			}
-			highlightedUnderFireTiles.Add(tile.GetComponent<MyTile>());
+			if (needHighlight)
+			{
+				tile.transform.Find("UnderFire").GetComponent<SpriteRenderer>().enabled = true;
+				highlightedUnderFireTiles.Add(tile.GetComponent<MyTile>());
+			}
 		}
 	}
 
@@ -308,6 +310,20 @@ public class GameManager : MonoBehaviour {
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
+		}
+	}
+
+	public void NextShip()
+	{
+		Unit selectedShip = GetSelectedUnit();
+		foreach (Unit u in GetPlayerUnits(GameManager.instance.currentPlayerSide))
+		{
+			if (u != selectedShip && (!u.movementCompleted || !u.fireCompleted))
+			{
+				SelectUnit(u);
+				Debug.Log("NextShip(): " + u.shipName + " is selected");
+				break;
+			}
 		}
 	}
 }
