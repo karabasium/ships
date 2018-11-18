@@ -25,46 +25,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		tileObj = Resources.Load("Prefabs/Tile") as GameObject;
-		//Debug.Log(tileObj);
-		Renderer r = tileObj.GetComponent<Renderer>();
-		SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
-		Color initTileColor = sr.color;
-
-		player_1 = new Player( 1 );
-		player_2 = new Player( 2 );
-		currentPlayerSide = player_1.side;
-		highlightMoveColor = new Color(0.75f, 0.95f, 1.0f, 1.0f);
-		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
-
-		float width = r.bounds.size[0];
-		float height = r.bounds.size[1];
-		Vector2 topRightCorner = new Vector2(1, 1);
-
-		Vector2 edgeVector = Camera.main.ViewportToWorldPoint( topRightCorner );
-		float screenWidth = edgeVector.x * 2;
-		float screenHeight = edgeVector.y * 2;
-		float screenZeroX = - edgeVector.x;
-		float screenZeroY = edgeVector.y;
-
-		fieldSizeX = (int) (screenWidth / width);
-		fieldSizeY = (int) (screenHeight / height);
-
-		for (int x = 0; x < fieldSizeX; x++)
-		{
-			for (int y = 0; y < fieldSizeY; y++)
-			{
-				tileObj = Resources.Load("Prefabs/Tile") as GameObject;
-				GameObject t = Instantiate(tileObj, new Vector3((screenZeroX + (x + 1) * width - width/2), (screenZeroY - (y+1)*height+height/2), 0), Quaternion.identity);
-				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
-			}
-		}
-		AddShip(3, 3, "brig", "brig", player_1);
-		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
-		AddShip(4, 8, "brig3", "brig", player_2);
-		AddShip(6, 8, "brig4", "brig", player_2);
-		AddShip(4, 7, "galera1", "galera", player_2);
-		SelectUnit(GetPlayerUnits(1)[0]);
+	
 	}
 	
 
@@ -130,7 +91,7 @@ public class GameManager : MonoBehaviour {
 								selectedShip.GetComponent<Unit>().movementCompleted = true;
 								if (!selectedShip.GetComponent<Unit>().fireCompleted)
 								{
-									HighlightArea(hit.collider.gameObject, selectedShip.GetComponent<Unit>().fireRange, "fire");
+									HighlightArea(hit.collider.gameObject, "fire");
 								}
 							}
 						}
@@ -166,6 +127,49 @@ public class GameManager : MonoBehaviour {
 	void Awake()
 	{
 		MakeSingleton();
+
+		tileObj = Resources.Load("Prefabs/Tile") as GameObject;
+		//Debug.Log(tileObj);
+		Renderer r = tileObj.GetComponent<Renderer>();
+		SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
+		Color initTileColor = sr.color;
+
+		player_1 = new Player(1);
+		player_2 = new Player(2);
+		currentPlayerSide = player_1.side;
+		highlightMoveColor = new Color(0.75f, 0.95f, 1.0f, 1.0f);
+		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
+
+		float width = r.bounds.size[0];
+		float height = r.bounds.size[1];
+		Vector2 topRightCorner = new Vector2(1, 1);
+
+		Vector2 edgeVector = Camera.main.ViewportToWorldPoint(topRightCorner);
+		float screenWidth = edgeVector.x * 2;
+		float screenHeight = edgeVector.y * 2;
+		float screenZeroX = -edgeVector.x;
+		float screenZeroY = edgeVector.y;
+
+		fieldSizeX = (int)(screenWidth / width);
+		fieldSizeY = (int)(screenHeight / height);
+
+		for (int x = 0; x < fieldSizeX; x++)
+		{
+			for (int y = 0; y < fieldSizeY; y++)
+			{
+				tileObj = Resources.Load("Prefabs/Tile") as GameObject;
+				GameObject t = Instantiate(tileObj, new Vector3((screenZeroX + (x + 1) * width - width / 2), (screenZeroY - (y + 1) * height + height / 2), 0), Quaternion.identity);
+				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
+			}
+		}
+		AddShip(3, 3, "brig", "brig", player_1);
+		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
+		AddShip(4, 8, "brig3", "brig", player_2);
+		AddShip(6, 8, "brig4", "brig", player_2);
+		AddShip(4, 7, "galera1", "galera", player_2);
+		SelectUnit(GetPlayerUnits(1)[0]);
+		GetComponent<Weather>().SetWeather();
+
 		HitProbability = 0.25f;
 		Weather w = GetComponent<Weather>();
 		Debug.Log("DISTANCE = " + w.DistanceToCurrentWind( -1, 1).ToString());
@@ -180,12 +184,12 @@ public class GameManager : MonoBehaviour {
 		ResetUnderFireHighlight();
 		if (!u.movementCompleted)
 		{
-			HighlightArea(u.transform.parent.gameObject, u.movementRange, "move");
+			HighlightArea(u.transform.parent.gameObject, "move");
 			//Debug.Log("move highilighted");
 		}
 		if (!u.fireCompleted)
 		{
-			HighlightArea(u.transform.parent.gameObject, u.fireRange, "fire");
+			HighlightArea(u.transform.parent.gameObject, "fire");
 			//Debug.Log("Fire highlighted");
 		}
 	}
@@ -271,31 +275,64 @@ public class GameManager : MonoBehaviour {
 		highlightedMoveTiles.Clear();
 	}
 
-	void HighlightArea(GameObject t, int radius, string type)
+	void HighlightArea(GameObject t, string type)
 	{
 		int[] xy = GetXYbyTileName(t.gameObject.name);
 		int x = xy[0];
 		int y = xy[1];
 		Weather w = GetComponent<Weather>();
-		for (int rel_x = -radius; rel_x <= radius; rel_x++)
+		int radius = 0;
+		Unit u = t.transform.Find("ship").GetComponent<Unit>();
+		if (u != null)
 		{
-			for (int rel_y = -radius; rel_y <= radius; rel_y++)
+			if (type == "move")
 			{
-				if (Math.Abs(rel_x) == Math.Abs(rel_y) || rel_x == 0 || rel_y == 0)
+				if (w.currentWeather == Weather.weather_type.WIND)
 				{
-					if (x + rel_x <= fieldSizeX && x + rel_x >= 1 && y + rel_y <= fieldSizeY && y + rel_y >= 1)
+					radius = u.movementRange;
+				}
+				else
+				{
+					if (w.currentWeather == Weather.weather_type.CALM)
 					{
-						if (type == "move")
+						radius = u.calmMovementRange;
+					}
+				}
+			}
+			else
+			{
+				radius = u.fireRange;
+			}
+			for (int rel_x = -radius; rel_x <= radius; rel_x++)
+			{
+				for (int rel_y = -radius; rel_y <= radius; rel_y++)
+				{
+					if (Math.Abs(rel_x) == Math.Abs(rel_y) || rel_x == 0 || rel_y == 0)
+					{
+						if (x + rel_x <= fieldSizeX && x + rel_x >= 1 && y + rel_y <= fieldSizeY && y + rel_y >= 1)
 						{
-							int rad = Math.Max(Math.Abs(rel_x), Math.Abs(rel_y));
-							if (rad <= radius - w.DistanceToCurrentWind(rel_x, rel_y))
+							if (type == "move")
+							{
+								if (GetComponent<Weather>().currentWeather == Weather.weather_type.WIND)
+								{
+									int rad = Math.Max(Math.Abs(rel_x), Math.Abs(rel_y));
+									if (rad <= radius - w.DistanceToCurrentWind(rel_x, rel_y))
+									{
+										HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
+									}
+								}
+								else
+								{
+									if (GetComponent<Weather>().currentWeather == Weather.weather_type.CALM)
+									{
+										HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
+									}
+								}
+							}
+							else
 							{
 								HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
 							}
-						}
-						else
-						{
-							HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
 						}
 					}
 				}
@@ -326,6 +363,40 @@ public class GameManager : MonoBehaviour {
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
+		}
+	}
+
+	public void StormMovesShips()
+	{
+		foreach (Unit u in GetPlayerUnits(currentPlayerSide))
+		{
+			int[] xy = GetXYbyTileName(u.gameObject.transform.parent.name);
+			int x = xy[0];
+			int y = xy[1];
+			int[] windDir = GetComponent<Weather>().curWind;
+			MyTile tileToDrift=null;
+			for (int radius = u.stormDrift; radius > 0; radius--)
+			{
+				tileToDrift = GetTileByXY(x + radius*windDir[0], y + (-1) * radius * windDir[0]).GetComponent<MyTile>();
+				if (tileToDrift != null)
+				{
+					break;
+				}
+			}
+			if (tileToDrift == null)
+			{
+				tileToDrift = GetTileByXY(x, y).GetComponent<MyTile>();
+			}
+			u.transform.parent = tileToDrift.gameObject.transform;
+			u.transform.localPosition = new Vector2(0, 0);
+			tileToDrift.AddShipToTile(u.gameObject);
+			u.movementCompleted = true;
+			ResetMoveHighlight();
+			ResetUnderFireHighlight();
+			if (!u.fireCompleted)
+			{
+				HighlightArea(tileToDrift.gameObject, "fire");
+			}
 		}
 	}
 

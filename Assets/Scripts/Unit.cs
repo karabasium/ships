@@ -16,8 +16,11 @@ public class Unit : MonoBehaviour {
 	private float width;
 	public int fireRange;
 	public int movementRange;
+	public int calmMovementRange;
+	public int stormDrift;
 	public List<GameObject> hp_spots = new List<GameObject>();
 	private SpriteRenderer shipSprite;
+	
 
 	// Use this for initialization
 	void Start () {
@@ -117,6 +120,8 @@ public class Unit : MonoBehaviour {
 			shotsCount = maxShotsCount;
 			fireRange = 3;
 			movementRange = 5;
+			calmMovementRange = 1;
+			stormDrift = 2;
 		}
 		else
 		{
@@ -127,6 +132,8 @@ public class Unit : MonoBehaviour {
 				shotsCount = maxShotsCount;
 				fireRange = 5;
 				movementRange = 5;
+				calmMovementRange = 0;
+				stormDrift = 3;
 			}
 			else
 			{
@@ -137,6 +144,8 @@ public class Unit : MonoBehaviour {
 					shotsCount = maxShotsCount;
 					fireRange = 3;
 					movementRange = 5;
+					calmMovementRange = 3;
+					stormDrift = 1;
 				}
 			}
 		}

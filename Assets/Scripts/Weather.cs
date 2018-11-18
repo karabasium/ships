@@ -9,8 +9,15 @@ public class Weather : MonoBehaviour {
 
 	private List<int[]> dirs = new List<int[]>();
 
-	private int[] curWind;
+	public int[] curWind;
 	private int curWindIndex;
+	public enum weather_type
+	{
+		WIND,
+		STORM,
+		CALM
+	}
+	public weather_type currentWeather;
 	// Use this for initialization
 	void Start () {
 
@@ -26,9 +33,7 @@ public class Weather : MonoBehaviour {
 		dirs.Add(new int[] { 0, -1 });
 		dirs.Add(new int[] { -1, -1 });
 		dirs.Add(new int[] { -1, 0 });
-		curWindIndex = 2;
-		curWind = dirs[curWindIndex];
-		Debug.Log("WEATHER awake ");
+		//SetWeather();
 	}
 
 	public int DistanceToCurrentWind( int dirX, int dirY)
@@ -50,5 +55,28 @@ public class Weather : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public void SetWeather()
+	{
+		currentWeather = (weather_type)Random.Range(0, System.Enum.GetValues(typeof(weather_type)).Length);
+		Debug.Log("WEATHER: " + currentWeather.ToString());
+		if (currentWeather == weather_type.WIND || currentWeather == weather_type.STORM)
+		{
+			curWindIndex = Random.Range(0, dirs.Count - 1);
+			curWind = dirs[curWindIndex];
+			if (currentWeather == weather_type.STORM)
+			{
+				GameManager.instance.StormMovesShips();
+			}
+		}
+		else
+		{
+			if (currentWeather == weather_type.CALM)
+			{
+				curWindIndex = -1;
+				curWind = null;
+			}
+		}
 	}
 }
