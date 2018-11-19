@@ -23,8 +23,8 @@ public class HUD : MonoBehaviour {
 		}
 		GameManager.instance.currentPlayerSide = nextPlayer;
 		ResetPlayerShipsActions(nextPlayer);
-		GameManager.instance.SelectUnit( GameManager.instance.GetPlayerUnits(nextPlayer)[0] );
 		GameManager.instance.GetComponent<Weather>().SetWeather();
+		GameManager.instance.SelectUnit( GameManager.instance.GetPlayerUnits(nextPlayer)[0] );		
 	}
 
 	void ResetPlayerShipsActions(int playerSide )

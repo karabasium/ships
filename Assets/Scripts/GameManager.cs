@@ -162,13 +162,13 @@ public class GameManager : MonoBehaviour {
 				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
 			}
 		}
-		AddShip(3, 3, "brig", "brig", player_1);
+		AddShip(8, 5, "brig", "brig", player_1);
 		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
 		AddShip(4, 8, "brig3", "brig", player_2);
 		AddShip(6, 8, "brig4", "brig", player_2);
-		AddShip(4, 7, "galera1", "galera", player_2);
-		SelectUnit(GetPlayerUnits(1)[0]);
+		AddShip(4, 7, "galera1", "galera", player_2);		
 		GetComponent<Weather>().SetWeather();
+		SelectUnit(GetPlayerUnits(1)[0]);
 
 		HitProbability = 0.25f;
 		Weather w = GetComponent<Weather>();
