@@ -21,7 +21,7 @@ public class Weather : MonoBehaviour {
 	public weather_type currentWeather;
 	// Use this for initialization
 	void Start () {
-
+		Debug.Log("weather start");
 	}
 
 	void Awake()
@@ -34,6 +34,7 @@ public class Weather : MonoBehaviour {
 		dirs.Add(new int[] { 0, -1 });
 		dirs.Add(new int[] { -1, -1 });
 		dirs.Add(new int[] { -1, 0 });
+		Debug.Log("dirs initialized");
 		//SetWeather();
 	}
 
@@ -68,7 +69,8 @@ public class Weather : MonoBehaviour {
 		if (currentWeather == weather_type.WIND || currentWeather == weather_type.STORM)
 		{
 			curWindIndex = Random.Range(0, dirs.Count - 1);
-			//curWindIndex = 6;
+			Debug.Log("curWindIndex = " + curWindIndex.ToString());
+			Debug.Log(dirs.Count.ToString());
 			curWind = dirs[curWindIndex];
 			Debug.Log("curWindIndex: " + curWindIndex.ToString());
 			if (currentWeather == weather_type.STORM)

@@ -296,6 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileObj: {fileID: 0}
   ships: []
+  friendlyShipHighlight: {r: 0, g: 0, b: 0, a: 0}
   player_1: {fileID: 0}
   player_2: {fileID: 0}
   currentPlayerSide: 0

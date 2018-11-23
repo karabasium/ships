@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour {
 	public int stormDrift;
 	public List<GameObject> hp_spots = new List<GameObject>();
 	private SpriteRenderer shipSprite;
+
 	
 
 	// Use this for initialization
@@ -117,38 +118,57 @@ public class Unit : MonoBehaviour {
 		{
 			hp = 3;
 			maxShotsCount = 1;
-			shotsCount = maxShotsCount;
 			fireRange = 3;
 			movementRange = 5;
 			calmMovementRange = 1;
 			stormDrift = 2;
 		}
-		else
+		else if (ship_class == "ship_of_the_line_2deck")
 		{
-			if (ship_class == "ship_of_the_line_2deck")
-			{
 				hp = 5;
 				maxShotsCount = 2;
-				shotsCount = maxShotsCount;
 				fireRange = 5;
 				movementRange = 5;
 				calmMovementRange = 0;
 				stormDrift = 3;
-			}
-			else
-			{
-				if (ship_class == "galera")
-				{
+		}
+		else if (ship_class == "ship_of_the_line_3deck")
+		{
+			hp = 7;
+			maxShotsCount = 3;
+			fireRange = 6;
+			movementRange = 5;
+			calmMovementRange = 0;
+			stormDrift = 3;
+		}
+		else if (ship_class == "galera")
+		{
 					hp = 3;
 					maxShotsCount = 1;
-					shotsCount = maxShotsCount;
 					fireRange = 3;
 					movementRange = 5;
 					calmMovementRange = 3;
 					stormDrift = 1;
-				}
-			}
 		}
+		else if (ship_class == "fregate")
+		{
+			hp = 4;
+			maxShotsCount = 1;
+			fireRange = 5;
+			movementRange = 6;
+			calmMovementRange = 0;
+			stormDrift = 2;
+		}
+		else if (ship_class == "tender")
+		{
+			hp = 2;
+			maxShotsCount = 1;
+			fireRange = 1;
+			movementRange = 6;
+			calmMovementRange = 1;
+			stormDrift = 2;
+		}
+		shotsCount = maxShotsCount;
 		AddHPVisual();
 	}
 	public void SetColor(Color color)

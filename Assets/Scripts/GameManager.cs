@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour {
 	public List<GameObject> ships = new List<GameObject>();
 	private Color highlightMoveColor;
 	private Color shipUnderFireHighlight;
+	public Color friendlyShipHighlight;
 	public Player player_1;
 	public Player player_2;
 	public int currentPlayerSide;
@@ -24,8 +25,9 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
-	
+		Debug.Log("Game manager start");
+		GetComponent<Weather>().SetWeather();
+		SelectUnit(GetPlayerUnits(1)[0]);
 	}
 	
 
@@ -139,6 +141,7 @@ public class GameManager : MonoBehaviour {
 		currentPlayerSide = player_1.side;
 		highlightMoveColor = new Color(0.75f, 0.95f, 1.0f, 1.0f);
 		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
+		friendlyShipHighlight = new Color(0.38f, 1.0f, 0.55f, 1.0f);
 
 		float width = r.bounds.size[0];
 		float height = r.bounds.size[1];
@@ -163,16 +166,16 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		AddShip(8, 5, "brig", "brig", player_1);
+		AddShip(3, 4, "a", "tender", player_1);
+		AddShip(6, 5, "meduse", "fregate", player_1);
 		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
 		AddShip(4, 8, "brig3", "brig", player_2);
 		AddShip(6, 8, "brig4", "brig", player_2);
-		AddShip(4, 7, "galera1", "galera", player_2);		
-		GetComponent<Weather>().SetWeather();
-		SelectUnit(GetPlayerUnits(1)[0]);
+		AddShip(4, 7, "galera1", "galera", player_2);
+		AddShip(7, 3, "ship", "ship_of_the_line_3deck", player_2);		
 
 		HitProbability = 0.25f;
 		Weather w = GetComponent<Weather>();
-		Debug.Log("DISTANCE = " + w.DistanceToCurrentWind( -1, 1).ToString());
 	}
 
 
@@ -192,6 +195,7 @@ public class GameManager : MonoBehaviour {
 			HighlightArea(u.transform.parent.gameObject, "fire");
 			//Debug.Log("Fire highlighted");
 		}
+		HighlightFriendlyShips();
 	}
 
 	int[] GetXYbyTileName( string s)
@@ -397,6 +401,26 @@ public class GameManager : MonoBehaviour {
 			{
 				HighlightArea(tileToDrift.gameObject, "fire");
 			}
+		}
+	}
+
+	public void HighlightFriendlyShips()
+	{
+		GetSelectedUnit().SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
+		foreach (Unit u in GetPlayerUnits(currentPlayerSide))
+		{
+			if (u != GetSelectedUnit())
+			{
+				u.SetColor(friendlyShipHighlight);
+			}
+		}
+	}
+
+	public void ResetAllShipsHighlights()
+	{
+		foreach (GameObject o in ships)
+		{
+			o.GetComponent<Unit>().SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 	}
 
