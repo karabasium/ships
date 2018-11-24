@@ -16,6 +16,18 @@ public class HUD : MonoBehaviour {
 
 	public void NextTurn()
 	{
+		foreach (Unit u in GameManager.instance.GetPlayerUnits(GameManager.instance.currentPlayerSide))
+		{
+			if (!u.movementCompleted && !u.fireCompleted)
+			{
+				u.idleTurnsCount++;
+				u.HealHP(1);
+			}
+			else
+			{
+				u.idleTurnsCount = 0;
+			}
+		}
 		int nextPlayer = 2;
 		if (GameManager.instance.currentPlayerSide == 2)
 		{

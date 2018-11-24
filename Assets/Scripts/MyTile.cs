@@ -7,6 +7,7 @@ public class MyTile : MonoBehaviour {
 	public string st;
 	private Texture2D mouseCursorAim;
 	private bool cursorChanged;
+	public bool isHeal = false;
 
 	// Use this for initialization
 	void Start()
@@ -37,7 +38,21 @@ public class MyTile : MonoBehaviour {
 	public void ResetMoveHighlight()
 	{
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		if (isHeal)
+		{
+			sr.color = GameManager.instance.healTileColor;
+		}
+		else
+		{
+			sr.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+	}
+
+	public void ResetHealHighlight()
+	{
+		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+		isHeal = false;
 	}
 
 	void OnMouseOver()

@@ -11,10 +11,12 @@ public class GameManager : MonoBehaviour {
 	private int fieldSizeY;
 	private List<MyTile> highlightedMoveTiles = new List<MyTile>();
 	private List<MyTile> highlightedUnderFireTiles = new List<MyTile>();
+	public List<MyTile> healTiles = new List<MyTile>();
 	public List<GameObject> ships = new List<GameObject>();
 	private Color highlightMoveColor;
 	private Color shipUnderFireHighlight;
 	public Color friendlyShipHighlight;
+	public Color healTileColor;
 	public Player player_1;
 	public Player player_2;
 	public int currentPlayerSide;
@@ -142,6 +144,7 @@ public class GameManager : MonoBehaviour {
 		highlightMoveColor = new Color(0.75f, 0.95f, 1.0f, 1.0f);
 		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
 		friendlyShipHighlight = new Color(0.38f, 1.0f, 0.55f, 1.0f);
+		healTileColor = new Color(0.69f, 0.93f, 0.67f, 1.0f);
 
 		float width = r.bounds.size[0];
 		float height = r.bounds.size[1];
@@ -166,6 +169,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		AddShip(8, 5, "brig", "brig", player_1);
+		AddShip(2, 2, "brig", "fort", player_1);
 		AddShip(3, 4, "a", "tender", player_1);
 		AddShip(6, 5, "meduse", "fregate", player_1);
 		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
@@ -219,8 +223,9 @@ public class GameManager : MonoBehaviour {
 		GameObject shipObj = Resources.Load("Prefabs/ship") as GameObject;
 		GameObject s = Instantiate(shipObj, new Vector3(0, 0, 0), Quaternion.identity);
 		s.name = "ship";
-		s.GetComponent<Unit>().SetupShip(ship_class, player.side, name);		
 		GetTileByXY(x, y).GetComponent<MyTile>().AddShipToTile(s);
+		s.GetComponent<Unit>().SetupShip(ship_class, player.side, name);		
+		
 		ships.Add(s);
 	}
 
@@ -254,6 +259,13 @@ public class GameManager : MonoBehaviour {
 				highlightedUnderFireTiles.Add(tile.GetComponent<MyTile>());
 			}
 		}
+		else if (type == "heal")
+		{
+			SpriteRenderer t_sr = tile.GetComponent<SpriteRenderer>();
+			t_sr.color = healTileColor;
+			healTiles.Add(tile.GetComponent<MyTile>());
+			tile.GetComponent<MyTile>().isHeal = true;
+		}
 	}
 
 	public void ResetUnderFireHighlight()
@@ -279,7 +291,29 @@ public class GameManager : MonoBehaviour {
 		highlightedMoveTiles.Clear();
 	}
 
-	void HighlightArea(GameObject t, string type)
+	public List<GameObject> GetTilesAround(GameObject t, int radius)
+	{
+		int[] xy = GetXYbyTileName(t.gameObject.name);
+		int x = xy[0];
+		int y = xy[1];
+		List<GameObject> tiles = new List<GameObject>();
+		for (int rel_x = -radius; rel_x <= radius; rel_x++)
+		{
+			for (int rel_y = -radius; rel_y <= radius; rel_y++)
+			{
+				if (Math.Abs(rel_x) == Math.Abs(rel_y) || rel_x == 0 || rel_y == 0)
+				{
+					if (x + rel_x <= fieldSizeX && x + rel_x >= 1 && y + rel_y <= fieldSizeY && y + rel_y >= 1)
+					{
+						tiles.Add(GetTileByXY(x + rel_x, y + rel_y));
+					}
+				}
+			}
+		}
+		return tiles;
+	}
+
+	public void HighlightArea(GameObject t, string type)
 	{
 		int[] xy = GetXYbyTileName(t.gameObject.name);
 		int x = xy[0];
@@ -303,9 +337,13 @@ public class GameManager : MonoBehaviour {
 					}
 				}
 			}
-			else
+			else if (type == "fire")
 			{
 				radius = u.fireRange;
+			}
+			else if (type == "heal")
+			{
+				radius = 1;
 			}
 			for (int rel_x = -radius; rel_x <= radius; rel_x++)
 			{
