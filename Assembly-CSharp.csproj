@@ -51,6 +51,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\CameraDrag.cs" />
+     <Compile Include="Assets\Scripts\Field.cs" />
      <Compile Include="Assets\Scripts\FlyOffText.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\HUD.cs" />

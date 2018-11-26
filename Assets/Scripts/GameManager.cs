@@ -7,8 +7,10 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 	public GameObject tileObj;
-	private int fieldSizeX;
-	private int fieldSizeY;
+	public float fieldSizeX;
+	public float fieldSizeY;
+	public float fieldZeroX;
+	public float fieldZeroY;
 	private List<MyTile> highlightedMoveTiles = new List<MyTile>();
 	private List<MyTile> highlightedUnderFireTiles = new List<MyTile>();
 	public List<MyTile> healTiles = new List<MyTile>();
@@ -156,16 +158,25 @@ public class GameManager : MonoBehaviour {
 		float screenZeroX = -edgeVector.x;
 		float screenZeroY = edgeVector.y;
 
-		fieldSizeX = (int)(screenWidth / width);
-		fieldSizeY = (int)(screenHeight / height);
+		Debug.Log("screenZeroX" + screenZeroX.ToString());
+		Debug.Log("screenZeroY" + screenZeroY.ToString());
 
-		for (int x = 0; x < fieldSizeX; x++)
+
+		fieldSizeX = 2*(screenWidth / width);
+		fieldSizeY = 2*(screenHeight / height);
+		fieldZeroX = screenZeroX;
+		fieldZeroY = screenZeroY;
+		Debug.Log("fieldZeroX = " + fieldZeroX.ToString());
+		Debug.Log("fieldZeroY = " + fieldZeroY.ToString());
+
+		for (int x = 0; x < (int)fieldSizeX; x++)
 		{
-			for (int y = 0; y < fieldSizeY; y++)
+			for (int y = 0; y < (int)fieldSizeY; y++)
 			{
 				tileObj = Resources.Load("Prefabs/Tile") as GameObject;
 				GameObject t = Instantiate(tileObj, new Vector3((screenZeroX + (x + 1) * width - width / 2), (screenZeroY - (y + 1) * height + height / 2), 0), Quaternion.identity);
-				t.name = string.Concat("tile_", (fieldSizeX * y + (x + 1)).ToString());
+				t.name = string.Concat("tile_", ((int)fieldSizeX * y + (x + 1)).ToString());
+				t.transform.parent = GameObject.Find("field").transform;
 			}
 		}
 		AddShip(8, 5, "brig", "brig", player_1);
@@ -207,15 +218,15 @@ public class GameManager : MonoBehaviour {
 		int[] xy = new int[] {0,0};
 		int position = s.IndexOf("_");
 		int n = Int32.Parse(s.Substring(position + 1));
-		xy[0] = n % fieldSizeX;
-		xy[1] = n / fieldSizeX+1;
+		xy[0] = n % (int)fieldSizeX;
+		xy[1] = n / (int)fieldSizeX+1;
 
 		return xy;
 	}
 
 	GameObject GetTileByXY(int x, int y)
 	{
-		return GameObject.Find(string.Concat("tile_", (fieldSizeX * (y-1) + x).ToString()));
+		return GameObject.Find(string.Concat("tile_", ((int)fieldSizeX * (y-1) + x).ToString()));
 	}
 
 	void AddShip(int x, int y, string name, string ship_class, Player player )
