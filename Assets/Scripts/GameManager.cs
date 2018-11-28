@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour {
 	public int currentPlayerSide;
 	private Texture2D mouseCursorAim;
 	public float HitProbability;
+	public List<Unit> previouslySelectedShips = new List<Unit>();
 
 
 
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 		Debug.Log("Game manager start");
 		GetComponent<Weather>().SetWeather();
+		previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
 		SelectUnit(GetPlayerUnits(1)[0]);
 	}
 	
@@ -476,14 +478,23 @@ public class GameManager : MonoBehaviour {
 	public void NextShip()
 	{
 		Unit selectedShip = GetSelectedUnit();
-		foreach (Unit u in GetPlayerUnits(GameManager.instance.currentPlayerSide))
+		previouslySelectedShips.Add(selectedShip);
+		Unit unitToSelect = null;
+		List<Unit> playerShips = GetPlayerUnits(currentPlayerSide);
+		foreach (Unit u in playerShips)
 		{
-			if (u != selectedShip && (!u.movementCompleted || !u.fireCompleted))
+			if (!previouslySelectedShips.Contains(u) && (!u.movementCompleted || !u.fireCompleted))
 			{
-				SelectUnit(u);
+				unitToSelect = u;
 				//Debug.Log("NextShip(): " + u.shipName + " is selected");
 				break;
 			}
 		}
+		if (unitToSelect == null)
+		{
+			previouslySelectedShips.Clear();
+			unitToSelect = playerShips[0];
+		}
+		SelectUnit(unitToSelect);
 	}
 }

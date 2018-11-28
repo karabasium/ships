@@ -37,6 +37,8 @@ public class HUD : MonoBehaviour {
 		ResetPlayerShipsActions(nextPlayer);
 		GameManager.instance.ResetAllShipsHighlights();
 		GameManager.instance.GetComponent<Weather>().SetWeather();
+		GameManager.instance.previouslySelectedShips.Clear();
+		GameManager.instance.previouslySelectedShips.Add(GameManager.instance.GetPlayerUnits(nextPlayer)[0]);
 		GameManager.instance.SelectUnit( GameManager.instance.GetPlayerUnits(nextPlayer)[0] );
 	}
 
