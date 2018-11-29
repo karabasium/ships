@@ -55,6 +55,19 @@ public class MyTile : MonoBehaviour {
 		isHeal = false;
 	}
 
+	public void ResetHighlightsExceptHeal()
+	{
+		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		if (!isHeal)
+		{			
+			sr.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		else
+		{
+			sr.color = GameManager.instance.healTileColor;
+		}
+	}
+
 	void OnMouseOver()
 	{
 		if (this.gameObject.transform.Find("ship") != null)

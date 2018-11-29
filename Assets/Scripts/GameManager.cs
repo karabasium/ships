@@ -14,11 +14,13 @@ public class GameManager : MonoBehaviour {
 	private List<MyTile> highlightedMoveTiles = new List<MyTile>();
 	private List<MyTile> highlightedUnderFireTiles = new List<MyTile>();
 	public List<MyTile> healTiles = new List<MyTile>();
+	public List<GameObject> tiles = new List<GameObject>();
 	public List<GameObject> ships = new List<GameObject>();
 	private Color highlightMoveColor;
 	private Color shipUnderFireHighlight;
 	public Color friendlyShipHighlight;
 	public Color healTileColor;
+	public Color friendlyShipTileHighlight;
 	public Player player_1;
 	public Player player_2;
 	public int currentPlayerSide;
@@ -65,6 +67,7 @@ public class GameManager : MonoBehaviour {
 					Unit shipUnit = ship.GetComponent<Unit>();
 					if (shipUnit.side == currentPlayerSide)
 					{
+						previouslySelectedShips.Clear();
 						SelectUnit(shipUnit);
 					}
 					else
@@ -90,12 +93,14 @@ public class GameManager : MonoBehaviour {
 							if (!selectedShip.GetComponent<Unit>().movementCompleted)
 							{ 
 								MyTile currentShipTileParent = selectedShip.transform.parent.GetComponent<MyTile>();
+								currentShipTileParent.ResetHighlightsExceptHeal();
 								selectedShip.transform.parent = t.transform;
 								selectedShip.transform.localPosition = new Vector2(0, 0);
 								selectedShip.GetComponent<Unit>().movementCompleted = true;
 								t.GetComponent<MyTile>().AddShipToTile(selectedShip.gameObject);
 								ResetMoveHighlight();
 								ResetUnderFireHighlight();
+								t.GetComponent<SpriteRenderer>().color = friendlyShipTileHighlight;
 								selectedShip.GetComponent<Unit>().movementCompleted = true;
 								if (!selectedShip.GetComponent<Unit>().fireCompleted)
 								{
@@ -149,6 +154,7 @@ public class GameManager : MonoBehaviour {
 		shipUnderFireHighlight = new Color(0.95f, 0.45f, 0.35f, 1.0f);
 		friendlyShipHighlight = new Color(0.38f, 1.0f, 0.55f, 1.0f);
 		healTileColor = new Color(0.69f, 0.93f, 0.67f, 1.0f);
+		friendlyShipTileHighlight = new Color(0.55f, 0.55f, 0.55f, 1.0f);
 
 		float width = r.bounds.size[0];
 		float height = r.bounds.size[1];
@@ -179,6 +185,7 @@ public class GameManager : MonoBehaviour {
 				GameObject t = Instantiate(tileObj, new Vector3((screenZeroX + (x + 1) * width - width / 2), (screenZeroY - (y + 1) * height + height / 2), 0), Quaternion.identity);
 				t.name = string.Concat("tile_", ((int)fieldSizeX * y + (x + 1)).ToString());
 				t.transform.parent = GameObject.Find("field").transform;
+				tiles.Add(t);
 			}
 		}
 		AddShip(8, 5, "brig", "brig", player_1);
@@ -457,13 +464,10 @@ public class GameManager : MonoBehaviour {
 
 	public void HighlightFriendlyShips()
 	{
-		GetSelectedUnit().SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
+		//GetSelectedUnit().SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
 		foreach (Unit u in GetPlayerUnits(currentPlayerSide))
 		{
-			if (u != GetSelectedUnit())
-			{
-				u.SetColor(friendlyShipHighlight);
-			}
+			u.gameObject.transform.parent.gameObject.GetComponent<SpriteRenderer>().color = friendlyShipTileHighlight;
 		}
 	}
 
@@ -472,6 +476,17 @@ public class GameManager : MonoBehaviour {
 		foreach (GameObject o in ships)
 		{
 			o.GetComponent<Unit>().SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+	}
+
+	public void ResetAllTilesHighlights()
+	{
+		foreach(GameObject t in tiles)
+		{
+			if (!healTiles.Contains(t.GetComponent<MyTile>()))
+			{
+				t.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			}
 		}
 	}
 
