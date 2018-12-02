@@ -6,6 +6,7 @@ public class MyTile : MonoBehaviour {
 	public GameObject tileObj;
 	public string st;
 	private Texture2D mouseCursorAim;
+	private Texture2D mouseCursorMove;
 	private bool cursorChanged;
 	public bool isHeal = false;
 
@@ -83,6 +84,10 @@ public class MyTile : MonoBehaviour {
 					cursorChanged = true;
 				}
 			}
+		}
+		else
+		{
+
 		}
 	}
 

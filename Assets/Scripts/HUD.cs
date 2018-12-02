@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HUD : MonoBehaviour {
-
+	private bool ready = false;
 	// Use this for initialization
 	void Start () {
-		
+		ready = true;
 	}
 	
 	// Update is called once per frame
@@ -18,7 +18,7 @@ public class HUD : MonoBehaviour {
 	{
 		foreach (Unit u in GameManager.instance.GetPlayerUnits(GameManager.instance.currentPlayerSide))
 		{
-			if (!u.movementCompleted && !u.fireCompleted)
+			if (!u.movementCompleted && !u.fireCompleted && u.transform.parent.gameObject.GetComponent<MyTile>().isHeal)
 			{
 				u.idleTurnsCount++;
 				u.HealHP(1);
@@ -37,7 +37,7 @@ public class HUD : MonoBehaviour {
 		ResetPlayerShipsActions(nextPlayer);
 		GameManager.instance.ResetAllShipsHighlights();
 		GameManager.instance.ResetAllTilesHighlights();
-		GameManager.instance.GetComponent<Weather>().SetWeather();
+		GameManager.instance.currentWeather.SetWeather();
 		GameManager.instance.previouslySelectedShips.Clear();
 		GameManager.instance.previouslySelectedShips.Add(GameManager.instance.GetPlayerUnits(nextPlayer)[0]);
 		GameManager.instance.SelectUnit( GameManager.instance.GetPlayerUnits(nextPlayer)[0] );
@@ -62,5 +62,11 @@ public class HUD : MonoBehaviour {
 	{
 		Debug.Log("NextShip(): Button clicked");
 		GameManager.instance.NextShip();
+	}
+
+
+	public bool isReady()
+	{
+		return ready;
 	}
 }

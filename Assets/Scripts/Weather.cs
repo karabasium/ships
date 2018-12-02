@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Weather : MonoBehaviour {
+public class Weather {
 	public int[][] directions = new int[][] { new int[] { -1, 1  }, new int[] { 0, 1 },   new int[] { 1, 1  },
 											new int[] { -1, 0  },                       new int[] { 1, 0  },
 											new int[] { -1, -1 }, new int[] { 0, -1 }, new int[]  { 1,-1 }};
@@ -19,12 +19,9 @@ public class Weather : MonoBehaviour {
 		CALM
 	}
 	public weather_type currentWeather;
-	// Use this for initialization
-	void Start () {
-		Debug.Log("weather start");
-	}
 
-	void Awake()
+
+	public void Init()
 	{
 		dirs.Add(new int[] { -1, 1 });
 		dirs.Add(new int[] { 0, 1 });

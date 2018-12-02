@@ -25,6 +25,7 @@ public class Unit : MonoBehaviour {
 	public List<GameObject> hp_spots = new List<GameObject>();
 	private SpriteRenderer shipSprite;
 
+
 	
 
 	// Use this for initialization
@@ -250,4 +251,5 @@ public class Unit : MonoBehaviour {
 		fireCompleted = false;
 		shotsCount = maxShotsCount;
 	}
+
 }

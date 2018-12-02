@@ -297,8 +297,10 @@ MonoBehaviour:
   shotsCount: 0
   fireRange: 0
   movementRange: 0
+  idleTurnsCount: 0
   calmMovementRange: 0
   stormDrift: 0
+  shipClass: 
   hp_spots: []
 --- !u!212 &212363652343772732
 SpriteRenderer:

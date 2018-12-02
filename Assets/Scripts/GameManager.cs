@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -16,7 +17,7 @@ public class GameManager : MonoBehaviour {
 	public List<MyTile> healTiles = new List<MyTile>();
 	public List<GameObject> tiles = new List<GameObject>();
 	public List<GameObject> ships = new List<GameObject>();
-	private Color highlightMoveColor;
+	public Color highlightMoveColor;
 	private Color shipUnderFireHighlight;
 	public Color friendlyShipHighlight;
 	public Color healTileColor;
@@ -27,21 +28,64 @@ public class GameManager : MonoBehaviour {
 	private Texture2D mouseCursorAim;
 	public float HitProbability;
 	public List<Unit> previouslySelectedShips = new List<Unit>();
+	private bool gameOver = false;
+	public Weather currentWeather;
 
 
 
 	// Use this for initialization
 	void Start () {
 		Debug.Log("Game manager start");
-		GetComponent<Weather>().SetWeather();
-		previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
-		SelectUnit(GetPlayerUnits(1)[0]);
+		//GetComponent<Weather>().SetWeather();
+		//previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
+		//SelectUnit(GetPlayerUnits(1)[0]);
 	}
-	
 
+	
+	void WinCondition()
+	{
+		if (gameOver)
+		{
+			return;
+		}
+		string winner = "unknown";
+		if (GetPlayerUnits(player_1.side).Count == 0 || GetPlayerUnits(player_2.side).Count == 0)
+		{
+			if (GetPlayerUnits(player_1.side).Count == 0)
+			{
+				winner = "Player 2";
+			}
+			else
+			{
+				winner = "Player 1";
+			}
+			Debug.Log(winner + " wins!");
+			GameObject resultScreenObj = GameObject.Find("ResultScreen");
+			resultScreenObj.GetComponent<Canvas>().enabled = true;
+			GameObject.Find("BattleResultText").GetComponent<Text>().text = winner + " wins!";
+			gameOver = true;
+		}
+	}
 
 	// Update is called once per frame
 	void Update () {
+		WinCondition();
+		if (gameOver)
+		{
+			foreach (GameObject o in tiles)
+			{
+				Destroy(o);
+
+			}
+			GameObject.Find("BottomHUDCanvas").GetComponent<Canvas>().enabled = false;
+			previouslySelectedShips = new List<Unit>();
+			ships = new List<GameObject>();
+			highlightedMoveTiles = new List<MyTile>();
+			highlightedUnderFireTiles = new List<MyTile>();
+			healTiles = new List<MyTile>();
+			tiles = new List<GameObject>();
+			return;			
+		}
 		if (GetSelectedUnit().fireCompleted && GetSelectedUnit().movementCompleted)
 		{
 			NextShip();
@@ -137,9 +181,17 @@ public class GameManager : MonoBehaviour {
 		return null;
 	}
 
-	void Awake()
+	public void Init()
 	{
-		MakeSingleton();
+		gameOver = false;
+		if (GameObject.Find("ResultScreen"))
+		{
+			GameObject.Find("ResultScreen").GetComponent<Canvas>().enabled = false;
+		}
+		if (GameObject.Find("BottomHUDCanvas"))
+		{
+			GameObject.Find("BottomHUDCanvas").GetComponent<Canvas>().enabled = true;
+		}
 
 		tileObj = Resources.Load("Prefabs/Tile") as GameObject;
 		//Debug.Log(tileObj);
@@ -170,12 +222,12 @@ public class GameManager : MonoBehaviour {
 		Debug.Log("screenZeroY" + screenZeroY.ToString());
 
 
-		fieldSizeX = 2*(screenWidth / width);
-		fieldSizeY = 2*(screenHeight / height);
+		fieldSizeX = 2 * (screenWidth / width);
+		fieldSizeY = 2 * (screenHeight / height);
 		fieldZeroX = screenZeroX;
 		fieldZeroY = screenZeroY;
-		Debug.Log("fieldZeroX = " + fieldZeroX.ToString());
-		Debug.Log("fieldZeroY = " + fieldZeroY.ToString());
+		Debug.Log("fieldSizeX = " + fieldSizeX.ToString());
+		Debug.Log("fieldSizeY = " + fieldSizeY.ToString());
 
 		for (int x = 0; x < (int)fieldSizeX; x++)
 		{
@@ -188,18 +240,30 @@ public class GameManager : MonoBehaviour {
 				tiles.Add(t);
 			}
 		}
-		AddShip(8, 5, "brig", "brig", player_1);
+		//AddShip(8, 5, "brig", "brig", player_1);
 		AddShip(2, 2, "brig", "fort", player_1);
-		AddShip(3, 4, "a", "tender", player_1);
-		AddShip(6, 5, "meduse", "fregate", player_1);
+		//AddShip(3, 4, "a", "tender", player_1);
+		//AddShip(6, 5, "meduse", "fregate", player_1);
 		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
 		AddShip(4, 8, "brig3", "brig", player_2);
-		AddShip(6, 8, "brig4", "brig", player_2);
-		AddShip(4, 7, "galera1", "galera", player_2);
-		AddShip(7, 3, "ship", "ship_of_the_line_3deck", player_2);		
+		//AddShip(6, 8, "brig4", "brig", player_2);
+		//AddShip(4, 7, "galera1", "galera", player_2);
+		//AddShip(7, 3, "ship", "ship_of_the_line_3deck", player_2);		
 
-		HitProbability = 0.25f;
-		Weather w = GetComponent<Weather>();
+		HitProbability = 1.0f;
+		currentWeather = new Weather();
+		currentWeather.Init();
+
+		currentWeather.SetWeather();
+		Debug.Log(GetPlayerUnits(1)[0].name);
+		previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
+		SelectUnit(GetPlayerUnits(1)[0]);
+	}
+
+	void Awake()
+	{
+		MakeSingleton();
+		Init();
 	}
 
 
@@ -338,7 +402,7 @@ public class GameManager : MonoBehaviour {
 		int[] xy = GetXYbyTileName(t.gameObject.name);
 		int x = xy[0];
 		int y = xy[1];
-		Weather w = GetComponent<Weather>();
+		Weather w = currentWeather;
 		int radius = 0;
 		Unit u = t.transform.Find("ship").GetComponent<Unit>();
 		if (u != null)
@@ -375,7 +439,7 @@ public class GameManager : MonoBehaviour {
 						{
 							if (type == "move")
 							{
-								if (GetComponent<Weather>().currentWeather == Weather.weather_type.WIND)
+								if (currentWeather.currentWeather == Weather.weather_type.WIND)
 								{
 									int rad = Math.Max(Math.Abs(rel_x), Math.Abs(rel_y));
 									if (rad <= radius - w.DistanceToCurrentWind(rel_x, rel_y))
@@ -385,7 +449,7 @@ public class GameManager : MonoBehaviour {
 								}
 								else
 								{
-									if (GetComponent<Weather>().currentWeather == Weather.weather_type.CALM)
+									if (currentWeather.currentWeather == Weather.weather_type.CALM)
 									{
 										HighlightTile(GetTileByXY(x + rel_x, y + rel_y), type);
 									}
@@ -435,7 +499,7 @@ public class GameManager : MonoBehaviour {
 			int[] xy = GetXYbyTileName(u.gameObject.transform.parent.name);
 			int x = xy[0];
 			int y = xy[1];
-			int[] windDir = GetComponent<Weather>().curWind;
+			int[] windDir = currentWeather.curWind;
 			MyTile tileToDrift=null;
 			for (int radius = u.stormDrift; radius > 0; radius--)
 			{
