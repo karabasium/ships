@@ -107,7 +107,7 @@ public class Unit : MonoBehaviour {
 				Destroy(gameObject);
 				Debug.Log("unit destroyed");
 				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-				if (shipClass == "fort")
+				if (shipClass == "fort" || shipClass == "fort_line2")
 				{
 					foreach(GameObject t_obj in GameManager.instance.GetTilesAround(tileObj,1))
 					{
@@ -151,7 +151,6 @@ public class Unit : MonoBehaviour {
 		if (ship_class == "brig")
 		{
 			hp = 3;
-			maxHP = hp;
 			maxShotsCount = 1;
 			fireRange = 3;
 
@@ -162,7 +161,6 @@ public class Unit : MonoBehaviour {
 		else if (ship_class == "ship_of_the_line_2deck")
 		{
 			hp = 5;
-			maxHP = hp;
 			maxShotsCount = 2;
 			fireRange = 5;
 
@@ -173,7 +171,6 @@ public class Unit : MonoBehaviour {
 		else if (ship_class == "ship_of_the_line_3deck")
 		{
 			hp = 7;
-			maxHP = hp;
 			maxShotsCount = 3;
 			fireRange = 6;
 
@@ -184,7 +181,6 @@ public class Unit : MonoBehaviour {
 		else if (ship_class == "galera")
 		{
 			hp = 3;
-			maxHP = hp;
 			maxShotsCount = 1;
 			fireRange = 3;
 
@@ -195,7 +191,6 @@ public class Unit : MonoBehaviour {
 		else if (ship_class == "fregate")
 		{
 			hp = 4;
-			maxHP = hp;
 			maxShotsCount = 1;
 			fireRange = 5;
 
@@ -206,7 +201,6 @@ public class Unit : MonoBehaviour {
 		else if (ship_class == "tender")
 		{
 			hp = 2;
-			maxHP = hp;
 			maxShotsCount = 1;
 			fireRange = 1;
 
@@ -217,7 +211,6 @@ public class Unit : MonoBehaviour {
 		else if (ship_class == "fort")
 		{
 			hp = 7;
-			maxHP = hp;
 			maxShotsCount = 3;
 			fireRange = 5;
 
@@ -227,6 +220,80 @@ public class Unit : MonoBehaviour {
 
 			GameManager.instance.HighlightArea(tileObj, "heal");			
 		}
+		else if (ship_class == "fort_line2")
+		{
+			hp = 5;
+			maxShotsCount = 2;
+			fireRange = 4;
+
+			movementRange = 0;
+			calmMovementRange = 0;
+			stormDrift = 0;
+
+			GameManager.instance.HighlightArea(tileObj, "heal");
+		}
+		else if (ship_class == "steamboat")
+		{
+			hp = 3;
+			maxShotsCount = 1;
+			fireRange = 3;
+
+			movementRange = 5;
+			calmMovementRange = 2;
+			stormDrift = 2;
+		}
+		else if (ship_class == "galleon")
+		{
+			hp = 3;
+			maxShotsCount = 2;
+			fireRange = 3;
+
+			movementRange = 4;
+			calmMovementRange = 0;
+			stormDrift = 3;
+		}
+		else if (ship_class == "ironclad")
+		{
+			hp = 3;
+			maxShotsCount = 3;
+			fireRange = 6;
+
+			movementRange = 4;
+			calmMovementRange = 2;
+			stormDrift = 2;
+
+		}
+		else if (ship_class == "monitor")
+		{
+			hp = 3;
+			maxShotsCount = 1;
+			fireRange = 3;
+
+			movementRange = 3;
+			calmMovementRange = 2;
+			stormDrift = 3;
+		}
+		else if (ship_class == "steam_corvette")
+		{
+			hp = 3;
+			maxShotsCount = 1;
+			fireRange = 3;
+
+			movementRange = 6;
+			calmMovementRange = 4;
+			stormDrift = 1;
+		}
+		else if (ship_class == "steam_fregate")
+		{
+			hp = 4;			
+			maxShotsCount = 1;
+			fireRange = 3;
+
+			movementRange = 6;
+			calmMovementRange = 4;
+			stormDrift = 1;
+		}
+		maxHP = hp;
 		shotsCount = maxShotsCount;
 		AddHPVisual();
 	}

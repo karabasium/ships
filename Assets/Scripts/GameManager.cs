@@ -240,13 +240,13 @@ public class GameManager : MonoBehaviour {
 				tiles.Add(t);
 			}
 		}
-		//AddShip(8, 5, "brig", "brig", player_1);
+		AddShip(8, 5, "brig", "ironclad", player_1);
 		AddShip(2, 2, "brig", "fort", player_1);
-		//AddShip(3, 4, "a", "tender", player_1);
-		//AddShip(6, 5, "meduse", "fregate", player_1);
-		AddShip(3, 7, "brig2", "ship_of_the_line_2deck", player_1);
-		AddShip(4, 8, "brig3", "brig", player_2);
-		//AddShip(6, 8, "brig4", "brig", player_2);
+		AddShip(3, 4, "a", "steamboat", player_1);
+		AddShip(6, 5, "meduse", "monitor", player_1);
+		AddShip(3, 7, "brig2", "steam_fregate", player_1);
+		AddShip(4, 8, "brig3", "steam_corvette", player_2);
+		AddShip(12, 14, "fort", "fort_line2", player_2);
 		//AddShip(4, 7, "galera1", "galera", player_2);
 		//AddShip(7, 3, "ship", "ship_of_the_line_3deck", player_2);		
 
