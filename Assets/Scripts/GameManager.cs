@@ -240,15 +240,104 @@ public class GameManager : MonoBehaviour {
 				tiles.Add(t);
 			}
 		}
-		AddShip(8, 5, "brig", "ironclad", player_1);
-		AddShip(2, 2, "brig", "fort", player_1);
-		AddShip(3, 4, "a", "steamboat", player_1);
-		AddShip(6, 5, "meduse", "monitor", player_1);
-		AddShip(3, 7, "brig2", "steam_fregate", player_1);
-		AddShip(4, 8, "brig3", "steam_corvette", player_2);
-		AddShip(12, 14, "fort", "fort_line2", player_2);
+		//AddShip(8, 5, "brig", "ironclad", player_1);
+		//AddShip(2, 2, "brig", "fort", player_1);
+		//AddShip(3, 4, "a", "steamboat", player_1);
+		//AddShip(6, 5, "meduse", "monitor", player_1);
+		//AddShip(3, 7, "brig2", "steam_fregate", player_1);
+		//AddShip(4, 8, "brig3", "steam_corvette", player_2);
+		//AddShip(12, 14, "fort", "fort_line2", player_2);
 		//AddShip(4, 7, "galera1", "galera", player_2);
-		//AddShip(7, 3, "ship", "ship_of_the_line_3deck", player_2);		
+		//AddShip(7, 3, "ship", "ship_of_the_line_3deck", player_2);
+		IDictionary<string, int> shipsDict = new Dictionary<string, int>();
+
+		shipsDict.Add("ship_of_the_line_3deck", 2);
+		shipsDict.Add("ship_of_the_line_2deck", 4);
+		shipsDict.Add("fregate", 3);
+		shipsDict.Add("tender", 2);
+		shipsDict.Add("brig", 5);
+		shipsDict.Add("galleon", 3);
+		shipsDict.Add("steam_fregate", 1);
+		shipsDict.Add("ironclad", 1);
+		shipsDict.Add("galera", 4);
+		shipsDict.Add("steam_corvette", 1);
+		shipsDict.Add("monitor", 1);
+		shipsDict.Add("steamboat", 1);
+
+		IDictionary<string, int> fortsDict = new Dictionary<string, int>();
+
+		fortsDict.Add("fort", 3);
+		fortsDict.Add("fort_line2", 3);
+
+		int x_min = 2;
+		int x_max = (int)fieldSizeX / 2;
+		int y_min = 2;
+		int y_max = (int)fieldSizeY - 2;
+		List<GameObject> fortTiles = new List<GameObject>();
+
+		int fortX = UnityEngine.Random.Range(x_min, x_max);
+		int fortY = UnityEngine.Random.Range(y_min, y_max);
+
+		fortX = 3;
+		fortY = 3;
+		AddShip(fortX, fortY, "fort", "fort", player_1);
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+
+		fortX = (int)fieldSizeX / 2 - 2;
+		fortY = 3;
+		AddShip(fortX, fortY, "fort", "fort_line2", player_1);
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+
+		fortX = 3;
+		fortY = (int)fieldSizeY / 2;
+		AddShip(fortX, fortY, "fort", "fort", player_1);
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+
+		fortX = (int)fieldSizeX / 2 - 2;
+		fortY = (int)fieldSizeY / 2;
+		AddShip(fortX, fortY, "fort", "fort_line2", player_1);
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+
+
+		fortX = 3;
+		fortY = (int)fieldSizeY - 2;
+		AddShip(fortX, fortY, "fort", "fort", player_1);
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+
+		fortX = (int)fieldSizeX / 2 - 2;
+		fortY = (int)fieldSizeY - 2;
+		AddShip(fortX, fortY, "fort", "fort_line2", player_1);
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+
+
+
+		fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+		int fortTiles_i = 0;
+		foreach (KeyValuePair<string, int> item in shipsDict)
+		{
+			for (int i = 0; i < item.Value; i++)
+			{
+				AddShip(fortTiles[fortTiles_i].GetComponent<MyTile>(), "s", item.Key, player_1);
+				fortTiles_i++;
+			}
+		}
+
+
+
+		fortX = UnityEngine.Random.Range(x_min, x_max);
+		fortY = UnityEngine.Random.Range(y_min, y_max);
+		fortTiles = new List<GameObject>();
+
+		AddShip((int)fieldSizeX / 2 + 2, 3, "fort", "fort", player_2);
+		AddShip((int)fieldSizeX - 2, 3, "fort", "fort_line2", player_2);
+		AddShip((int)fieldSizeX / 2 + 2, (int)fieldSizeY / 2, "fort", "fort", player_2);
+		AddShip((int)fieldSizeX - 2, (int)fieldSizeY / 2, "fort", "fort_line2", player_2);
+		AddShip((int)fieldSizeX / 2 + 2, (int)fieldSizeY - 2, "fort", "fort_line2", player_2);
+		AddShip((int)fieldSizeX - 2, (int)fieldSizeY - 2, "fort", "fort_line2", player_2);
+
+		//fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+		//AddShip(fortTiles[0].GetComponent<MyTile>(), "brig", "galera", player_2);
+
 
 		HitProbability = 1.0f;
 		currentWeather = new Weather();
@@ -258,6 +347,96 @@ public class GameManager : MonoBehaviour {
 		Debug.Log(GetPlayerUnits(1)[0].name);
 		previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
 		SelectUnit(GetPlayerUnits(1)[0]);
+	}
+
+	void ShipsInitialArrangement()
+	{
+		IDictionary<string, int> shipsDict = new Dictionary<string, int>();
+
+		shipsDict.Add("ship_of_the_line_3deck", 1);
+		shipsDict.Add("ship_of_the_line_2deck", 1);
+		shipsDict.Add("fregate", 1);
+		shipsDict.Add("tender", 1);
+		shipsDict.Add("brig", 1);
+		shipsDict.Add("galleon", 1);
+		shipsDict.Add("steam_fregate", 1);
+		shipsDict.Add("ironclad", 1);
+		shipsDict.Add("galera", 4);
+		shipsDict.Add("steam_corvette", 1);
+		shipsDict.Add("monitor", 1);
+		shipsDict.Add("steamboat", 1);
+
+		IDictionary<string, int> fortsDict = new Dictionary<string, int>();
+
+		fortsDict.Add("fort", 3);
+		fortsDict.Add("fort_line2", 3);
+
+		int x_min = 2;
+		int x_max = (int)fieldSizeX / 2;
+		int y_min = 2;
+		int y_max = (int)fieldSizeY - 2;
+		List<GameObject> fortTiles = new List<GameObject>();
+
+
+		foreach (KeyValuePair<string, int> item in fortsDict)
+		{
+			int fortX = UnityEngine.Random.Range(x_min, x_max);
+			int fortY = UnityEngine.Random.Range(y_min, y_max);
+			for (int i=0; i<item.Value; i++)
+			{
+				//while (GetTileByXY(fortX, fortY).GetComponent<MyTile>().isHeal)
+				//{
+					fortX = UnityEngine.Random.Range(x_min, x_max);
+					fortY = UnityEngine.Random.Range(y_min, y_max);
+				//}
+				AddShip(fortX, fortY, "fort", item.Key, player_1);
+				fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+			}
+		}
+		Debug.Log("forts completed");
+
+		int fortTiles_i = 0;
+		foreach (KeyValuePair<string, int> item in shipsDict)
+		{
+			for (int i = 0; i < item.Value; i++)
+			{
+				AddShip(fortTiles[fortTiles_i].GetComponent<MyTile>(), "s", item.Key, player_1);
+				fortTiles_i++;
+			}
+		}
+
+		x_min = (int)fieldSizeX / 2 + 2;
+		x_max = (int)fieldSizeX - 2;
+		y_min = 2;
+		y_max = (int)fieldSizeY - 2;
+		fortTiles = new List<GameObject>();
+
+
+		foreach (KeyValuePair<string, int> item in fortsDict)
+		{
+			int fortX = UnityEngine.Random.Range(x_min, x_max); ;
+			int fortY = UnityEngine.Random.Range(y_min, y_max);
+			for (int i = 0; i < item.Value; i++)
+			{
+				while (!GetTileByXY(fortX, fortY).GetComponent<MyTile>().isHeal)
+				{
+					fortX = UnityEngine.Random.Range(x_min, x_max);
+					fortY = UnityEngine.Random.Range(y_min, y_max);
+				}
+				AddShip(fortX, fortY, "fort", item.Key, player_2);
+				fortTiles.AddRange(GetTilesAround(GetTileByXY(fortX, fortY), 1));
+			}
+		}
+		Debug.Log("forts completed2");
+		fortTiles_i = 0;
+		foreach (KeyValuePair<string, int> item in shipsDict)
+		{
+			for (int i = 0; i < item.Value; i++)
+			{
+				AddShip(fortTiles[fortTiles_i].GetComponent<MyTile>(), "s", item.Key, player_2);
+				fortTiles_i++;
+			}
+		}
 	}
 
 	void Awake()
@@ -310,6 +489,17 @@ public class GameManager : MonoBehaviour {
 		GetTileByXY(x, y).GetComponent<MyTile>().AddShipToTile(s);
 		s.GetComponent<Unit>().SetupShip(ship_class, player.side, name);		
 		
+		ships.Add(s);
+	}
+
+	void AddShip(MyTile t, string name, string ship_class, Player player)
+	{
+		GameObject shipObj = Resources.Load("Prefabs/ship") as GameObject;
+		GameObject s = Instantiate(shipObj, new Vector3(0, 0, 0), Quaternion.identity);
+		s.name = "ship";
+		t.AddShipToTile(s);
+		s.GetComponent<Unit>().SetupShip(ship_class, player.side, name);
+
 		ships.Add(s);
 	}
 
@@ -389,6 +579,10 @@ public class GameManager : MonoBehaviour {
 				{
 					if (x + rel_x <= fieldSizeX && x + rel_x >= 1 && y + rel_y <= fieldSizeY && y + rel_y >= 1)
 					{
+						if (rel_x == rel_y && rel_x == 0)
+						{
+							continue;
+						}
 						tiles.Add(GetTileByXY(x + rel_x, y + rel_y));
 					}
 				}
