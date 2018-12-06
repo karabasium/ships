@@ -26,10 +26,12 @@ public class Unit : MonoBehaviour {
 	private SpriteRenderer shipSprite;
 
 
+
 	
 
 	// Use this for initialization
 	void Start () {
+
 	}
 	
 	void AddHPVisual()
@@ -310,6 +312,11 @@ public class Unit : MonoBehaviour {
 			fireCompleted = true;
 			shotsCount = 0;
 		}
+	}
+
+	public Texture GetUnitTexture()
+	{
+		return shipSprite.sprite.texture;
 	}
 
 	public void NextTurnSetup()

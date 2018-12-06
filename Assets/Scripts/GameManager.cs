@@ -30,15 +30,15 @@ public class GameManager : MonoBehaviour {
 	public List<Unit> previouslySelectedShips = new List<Unit>();
 	private bool gameOver = false;
 	public Weather currentWeather;
+	Texture UISelectedShipTexture;
+	float rUISelectedShipImageWidth;
+	float rUISelectedShipImageHeight;
+	RawImage rImage;
 
 
-
-	// Use this for initialization
 	void Start () {
-		Debug.Log("Game manager start");
-		//GetComponent<Weather>().SetWeather();
-		//previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
-		//SelectUnit(GetPlayerUnits(1)[0]);
+		//UISelectedShipTexture = GameObject.Find("SelectedShipRawImage").GetComponent<RawImage>().texture;
+
 	}
 
 	
@@ -350,13 +350,14 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
-		HitProbability = 1.0f;
+		HitProbability = 0.25f;
 		currentWeather = new Weather();
 		currentWeather.Init();
 
 		currentWeather.SetWeather();
 		Debug.Log(GetPlayerUnits(1)[0].name);
 		previouslySelectedShips.Add(GetPlayerUnits(1)[0]);
+
 		SelectUnit(GetPlayerUnits(1)[0]);
 	}
 	
@@ -385,6 +386,33 @@ public class GameManager : MonoBehaviour {
 			//Debug.Log("Fire highlighted");
 		}
 		HighlightFriendlyShips();
+		Texture unitTexture = u.GetUnitTexture();
+		Debug.Log("unitTexture.width = " + unitTexture.width.ToString());
+		Debug.Log("unitTexture.height = " + unitTexture.height.ToString());
+
+		float ratio = unitTexture.width / (float)unitTexture.height;
+
+		Debug.Log("ratio = " + ratio.ToString());
+
+		rImage = GameObject.Find("SelectedShipRawImage").GetComponent<RawImage>();
+		float rImageWidth = 100.0f;
+		float rImageHeight = 100.0f;
+
+		Debug.Log("rImageWidth = " + rImageWidth.ToString());
+		Debug.Log("rImageHeight = " + rImageHeight.ToString());
+
+		if (unitTexture.width > unitTexture.height)
+		{
+			rImageHeight = rImageHeight / ratio;
+		}
+		else
+		{
+			rImageWidth = rImageWidth * ratio;
+		}
+		Debug.Log("rImageWidth = " + rImageWidth.ToString());
+		Debug.Log("rImageHeight = " + rImageHeight.ToString());
+		GameObject.Find("SelectedShipRawImage").GetComponent<RawImage>().GetComponent<RectTransform>().sizeDelta = new Vector2(rImageWidth, rImageHeight);
+		GameObject.Find("SelectedShipRawImage").GetComponent<RawImage>().texture = unitTexture;
 	}
 
 	int[] GetXYbyTileName( string s)

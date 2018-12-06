@@ -110,6 +110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileObj: {fileID: 0}
   st: 
+  isHeal: 0
 --- !u!212 &212801896942658326
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -144,7 +145,7 @@ SpriteRenderer:
   m_SortingLayerID: -1373363139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 74e2c96d96d44fd43b669ad2293c5ee9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 644ea35b17ba8904bbd20af9ab82056d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

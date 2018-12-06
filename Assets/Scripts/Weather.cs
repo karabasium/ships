@@ -61,15 +61,22 @@ public class Weather {
 	public void SetWeather()
 	{
 		//currentWeather = (weather_type)Random.Range(0, System.Enum.GetValues(typeof(weather_type)).Length);
-		currentWeather = weather_type.WIND;
+		int rnd = Random.Range(1, 3);
+		if (rnd == 1)
+		{
+			currentWeather = weather_type.CALM;
+		}
+		else
+		{
+			currentWeather = weather_type.WIND;
+		}
+
+		//currentWeather = weather_type.WIND;
 		Debug.Log("WEATHER: " + currentWeather.ToString());
 		if (currentWeather == weather_type.WIND || currentWeather == weather_type.STORM)
 		{
 			curWindIndex = Random.Range(0, dirs.Count - 1);
-			Debug.Log("curWindIndex = " + curWindIndex.ToString());
-			Debug.Log(dirs.Count.ToString());
 			curWind = dirs[curWindIndex];
-			Debug.Log("curWindIndex: " + curWindIndex.ToString());
 			if (currentWeather == weather_type.STORM)
 			{
 				GameManager.instance.StormMovesShips();
@@ -83,7 +90,7 @@ public class Weather {
 				curWind = null;
 			}
 		}
-		
+		Text w_text = GameObject.Find("WeatherText").GetComponent<Text>();
 
 		if (currentWeather == weather_type.WIND)
 		{
@@ -96,7 +103,7 @@ public class Weather {
 		}
 		else if (currentWeather == weather_type.CALM)
 		{
-			//w_text.text = "Calm";
+			w_text.text = "Calm";
 		}
 		else
 		{
